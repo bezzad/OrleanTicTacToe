@@ -1,14 +1,18 @@
-
+using Microsoft.OpenApi.Models;
 using System.Net;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TicTacToe;
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static async Task Main(string[] args) =>
+            await CreateHostBuilder(args).Build().RunAsync().ConfigureAwait(false);
+
+    public static IHostBuilder CreateHostBuilder(string[] args)
     {
         var builder = Host.CreateDefaultBuilder(args);
-        await builder.UseOrleans((ctx, siloBuilder) =>
+        builder.UseOrleans((ctx, siloBuilder) =>
             {
                 // In order to support multiple hosts forming a cluster,
                 // they must listen on different ports.
@@ -33,7 +37,6 @@ public class Program
                     options.CounterUpdateIntervalMs = 1000;
                 });
             })
-            
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.ConfigureServices(services =>
@@ -43,7 +46,17 @@ public class Program
 
                     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
                     services.AddEndpointsApiExplorer();
-                    services.AddSwaggerGen();
+                    services.AddSwaggerGen(options =>
+                    {
+                        var version = "v" + typeof(Program).Assembly.GetName().Version.ToString(3);
+                        options.SwaggerDoc("v1", new OpenApiInfo
+                        {
+                            Title = nameof(TicTacToe),
+                            Version = version
+                        });
+                        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml"));
+                        options.DescribeAllParametersInCamelCase();
+                    });
                 });
 
                 webBuilder.UseStartup<Startup>();
@@ -52,10 +65,14 @@ public class Program
                 {
                     // To avoid port conflicts, each Web server must listen on a different port.
                     var instanceId = ctx.Configuration.GetValue<int>("InstanceId");
-                    //kestrelOptions.ListenLocalhost(5001 + instanceId);
-                    kestrelOptions.ListenAnyIP(5001 + instanceId);
+                    kestrelOptions.ListenAnyIP(5000 + instanceId);
                 });
             })
-            .RunConsoleAsync();
+            .ConfigureServices((context, services) =>
+            {
+                //services.Configure<SampleOptions>(options => context.Configuration.GetSection("Sample").Bind(options));
+            });
+
+        return builder;
     }
 }
