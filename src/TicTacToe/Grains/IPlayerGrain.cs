@@ -1,3 +1,5 @@
+using TicTacToe.Models;
+
 namespace TicTacToe.Grains;
 
 public interface IPlayerGrain : IGrainWithGuidKey
@@ -19,4 +21,6 @@ public interface IPlayerGrain : IGrainWithGuidKey
     Task SetUsername(string username);
 
     Task<string> GetUsername();
+
+    Task<User> GetUser();
 }

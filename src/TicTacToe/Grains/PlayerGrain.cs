@@ -1,24 +1,22 @@
+using TicTacToe.Models;
+
 namespace TicTacToe.Grains;
 
 public class PlayerGrain : Grain, IPlayerGrain
 {
     private List<Guid> _activeGames = new();
     private List<Guid> _pastGames = new();
-
-    private int _wins;
-    private int _loses;
-    private int _gamesStarted;
-
-    private string _username = null!;
+    private User _user = new();
 
     public override Task OnActivateAsync(CancellationToken token)
     {
         _activeGames = new List<Guid>();
         _pastGames = new List<Guid>();
-
-        _wins = 0;
-        _loses = 0;
-        _gamesStarted = 0;
+        var playerId = this.GetPrimaryKey();  // our player id
+        _user = new()
+        {
+            Id = playerId
+        };
 
         return base.OnActivateAsync(token);
     }
@@ -32,7 +30,7 @@ public class PlayerGrain : Grain, IPlayerGrain
     // create a new game, and add oursleves to that game
     public async Task<Guid> CreateGame()
     {
-        _gamesStarted++;
+        _user.GamesStarted++;
 
         var gameId = Guid.NewGuid();
         var gameGrain = GrainFactory.GetGrain<IGameGrain>(gameId);  // create new game
@@ -41,7 +39,7 @@ public class PlayerGrain : Grain, IPlayerGrain
         var playerId = this.GetPrimaryKey();  // our player id
         await gameGrain.AddPlayerToGame(playerId);
         _activeGames.Add(gameId);
-        var name = $"{_username}'s {AddOrdinalSuffix(_gamesStarted.ToString())} game";
+        var name = $"{_user.Username}'s {AddOrdinalSuffix(_user.GamesStarted.ToString())} game";
         await gameGrain.SetName(name);
 
         var pairingGrain = GrainFactory.GetGrain<IPairingGrain>(0);
@@ -74,8 +72,8 @@ public class PlayerGrain : Grain, IPlayerGrain
         // manage running total
         _ = outcome switch
         {
-            GameOutcome.Win => _wins++,
-            GameOutcome.Lose => _loses++,
+            GameOutcome.Win => _user.Wins++,
+            GameOutcome.Lose => _user.Loses++,
             _ => 0
         };
 
@@ -97,11 +95,12 @@ public class PlayerGrain : Grain, IPlayerGrain
 
     public Task SetUsername(string name)
     {
-        _username = name;
+        _user.Username = name;
         return Task.CompletedTask;
     }
 
-    public Task<string> GetUsername() => Task.FromResult(_username);
+    public Task<string> GetUsername() => Task.FromResult(_user.Username);
+    public Task<User> GetUser() => Task.FromResult(_user);
 
     private static string AddOrdinalSuffix(string number)
     {
