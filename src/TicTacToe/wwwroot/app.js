@@ -49,12 +49,14 @@ var oxo = {
             });
         },
         updateUserModel: function (data) {
-            oxo.model.id = data.id;
-            oxo.model.name = data.username;
-            oxo.model.email = data.email;
-            oxo.model.wins = data.wins;
-            oxo.model.loses = data.loses;
-            setCookie("playerId", data.id, 30);
+            if (data.id) {
+                oxo.model.id = data.id;
+                oxo.model.name = data.username;
+                oxo.model.email = data.email;
+                oxo.model.wins = data.wins;
+                oxo.model.loses = data.loses;
+                setCookie(playerIdKey, data.id, 30);
+            }
         }
     },
 
@@ -171,15 +173,18 @@ function getCookie(cname) {
 }
 
 $(document).ready(function () {
-    oxo.model.id = getCookie("playerId");
+    oxo.model.id = getCookie(playerIdKey);
     $.ajaxSetup({
         beforeSend: function (xhr) {
             xhr.setRequestHeader('x-appname', "tic tac toe pure js client");
             xhr.setRequestHeader(playerIdKey, oxo.model.id);
         },
         complete: function (xhr) {
-            oxo.model.id = xhr.getResponseHeader(playerIdKey);
-            setCookie("playerId", oxo.model.id, 30);
+            var id = xhr.getResponseHeader(playerIdKey);
+            if (id) {
+                oxo.model.id = id;
+                setCookie(playerIdKey, id, 30);
+            }
         }
     });
 
