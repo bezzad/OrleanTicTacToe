@@ -12,22 +12,24 @@ public class PlayerController : BaseController
     public async Task<ActionResult<User>> GetInfo()
     {
         var guid = GetPlayerId();
-        var player = _grainFactory.GetGrain<IPlayerGrain>(guid);
+        var player = GrainFactory.GetGrain<IPlayerGrain>(guid);
         var user = await player.GetUser();
 
         return Ok(user);
     }
 
-    [HttpPost("SetUsername")]
-    public async Task<IActionResult> SetUsername(string username)
+    [HttpPost("SetUsername/{username}")]
+    public async Task<ActionResult<User>> SetUsername(string username)
     {
         if (string.IsNullOrWhiteSpace(username))
         {
             return BadRequest($"{nameof(username)} is null or empty!");
         }
 
-        var player = _grainFactory.GetGrain<IPlayerGrain>(GetPlayerId());
+        var guid = GetPlayerId();
+        var player = GrainFactory.GetGrain<IPlayerGrain>(guid);
         await player.SetUsername(username);
-        return Ok();
+        var user = await player.GetUser();
+        return Ok(user);
     }
 }

@@ -12,7 +12,7 @@ public class Startup
             app.UseSwaggerUI();
         }
 
-        app.UseStaticFiles();
+        app.UseStaticFiles(); // For the wwwroot folder
         app.UseDefaultFiles();
         app.UseHttpsRedirection();
         app.UseRouting();

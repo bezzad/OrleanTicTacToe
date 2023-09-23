@@ -6,10 +6,10 @@ namespace TicTacToe.Controllers;
 [Route("[controller]")]
 public class BaseController : ControllerBase
 {
-    private const string PlayerIdKey = "x-playerid";
-    protected readonly IGrainFactory _grainFactory;
+    private const string PlayerIdKey = "x-player-id";
+    protected readonly IGrainFactory GrainFactory;
 
-    public BaseController(IGrainFactory grainFactory) => _grainFactory = grainFactory;
+    public BaseController(IGrainFactory grainFactory) => GrainFactory = grainFactory;
 
     protected Guid GetPlayerId()
     {

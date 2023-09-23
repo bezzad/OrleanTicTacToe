@@ -24,7 +24,9 @@ public class PlayerGrain : Grain, IPlayerGrain
     public async Task<PairingSummary[]> GetAvailableGames()
     {
         var grain = GrainFactory.GetGrain<IPairingGrain>(0);
-        return (await grain.GetGames()).Where(x => !_activeGames.Contains(x.GameId)).ToArray();
+        var games = await grain.GetGames();
+        var availableGames = games.Where(x => !_activeGames.Contains(x.GameId)).ToArray();
+        return availableGames;
     }
 
     // create a new game, and add oursleves to that game
