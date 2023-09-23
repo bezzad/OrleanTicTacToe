@@ -1,4 +1,7 @@
-﻿namespace TicTacToe;
+﻿using TicTacToe.Hubs;
+using Microsoft.AspNetCore.SignalR;
+
+namespace TicTacToe;
 
 public class Startup
 {
@@ -21,6 +24,7 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
+            endpoints.MapHub<GameHub>("/gameHub");
         });
     }
 }

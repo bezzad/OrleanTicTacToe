@@ -1,11 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using TicTacToe.Grains;
+using TicTacToe.Hubs;
 
 namespace TicTacToe.Controllers;
 
 public class GameController : BaseController
 {
-    public GameController(IGrainFactory grainFactory) : base(grainFactory) { }
+    private readonly IHubContext<GameHub> _hubContext;
+
+    public GameController(IGrainFactory grainFactory, IHubContext<GameHub> hubContext) : base(grainFactory) 
+    { 
+        _hubContext = hubContext;
+    }
 
     [HttpGet]
     public async Task<IActionResult> Get()
@@ -25,6 +32,10 @@ public class GameController : BaseController
         var guid = GetPlayerId();
         var player = GrainFactory.GetGrain<IPlayerGrain>(guid);
         var gameIdTask = await player.CreateGame();
+
+        // Notify connected SignalR clients with some data:
+        await _hubContext.Clients.All.SendAsync("broadcastMessage", "the weatherman", $" HIiii").ConfigureAwait(false);
+
         return Ok(new { GameId = gameIdTask });
     }
 

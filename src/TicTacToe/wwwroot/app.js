@@ -58,7 +58,7 @@ var oxo = {
 
     controllers: {
         refreshHeader: function () {
-            
+
             oxo.ajax.getUser(user => {
                 updateUserModel(user);
                 if (!oxo.model.name) {
@@ -223,4 +223,23 @@ $(document).ready(function () {
             $("#enterNameOk").click();
         }
     });
+
+
+
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
+    connection.on("broadcastMessage", function (user, message) {
+        console.log("Signal received from Orlean, refresh games list...");
+        oxo.controllers.refreshGamesList();
+    });
+
+    connection.start()
+        .then(function () {
+            console.log("SignalR connected.");
+        }).catch(err => {
+            console.error(err.toString());
+        });
 });
+
+
+
