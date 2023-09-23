@@ -6,7 +6,7 @@ public class PlayerGrain : Grain, IPlayerGrain
 {
     private List<Guid> _activeGames = new();
     private List<Guid> _pastGames = new();
-    private User _user = new();
+    private User _user;
 
     public override Task OnActivateAsync(CancellationToken token)
     {
