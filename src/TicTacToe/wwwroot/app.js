@@ -5,11 +5,10 @@ var oxo = {
     },
 
     model: {
-        currentGame: "",
+        currentGame: null,
         gameList: [],
-        name: "New User",
-        id: "0",
-
+        name: null,
+        id: null
     },
 
     ajax: {
@@ -42,21 +41,18 @@ var oxo = {
         },
         setName: function (name, cb) {
             $.post("/Player/SetUsername/" + name + oxo.rand(), function (data) {
-                oxo.ajax.updateUserModel(data);
+                updateUserModel(data);
                 if (cb) {
                     cb(data);
                 }
             });
         },
-        updateUserModel: function (data) {
-            if (data.id) {
-                oxo.model.id = data.id;
-                oxo.model.name = data.username;
-                oxo.model.email = data.email;
-                oxo.model.wins = data.wins;
-                oxo.model.loses = data.loses;
-                setCookie(playerIdKey, data.id, 30);
-            }
+        getUser: function (cb) {
+            $.get("/Player/Info", function (data) {
+                if (cb) {
+                    cb(data);
+                }
+            });
         }
     },
 
@@ -149,6 +145,17 @@ var oxo = {
     }
 }
 
+function updateUserModel(data) {
+    if (data.id) {
+        oxo.model.id = data.id;
+        oxo.model.name = data.username;
+        oxo.model.email = data.email;
+        oxo.model.wins = data.wins;
+        oxo.model.loses = data.loses;
+        setCookie(playerIdKey, data.id, 30);
+    }
+}
+
 function setCookie(cname, cvalue, exdays) {
     const d = new Date();
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -188,6 +195,19 @@ $(document).ready(function () {
         }
     });
 
+    oxo.ajax.getUser(user => {
+        updateUserModel(user);
+        if (!oxo.model.name) {
+            $("#enter-name-modal").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        }
+
+        oxo.controllers.refreshGamesList();
+        oxo.controllers.refreshBoard();
+    });
+
     $("#joinConfirmButton").bind('click', oxo.controllers.joinGame);
     $("#enterNameOk").bind('click', oxo.controllers.enterName);
     $("enter-name-input").keyup(function (event) {
@@ -195,12 +215,4 @@ $(document).ready(function () {
             $("#enterNameOk").click();
         }
     });
-
-    $("#enter-name-modal").modal({
-        backdrop: 'static',
-        keyboard: false
-    });
-
-    oxo.controllers.refreshGamesList();
-    oxo.controllers.refreshBoard();
 });
