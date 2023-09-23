@@ -28,7 +28,7 @@ public class GameController : BaseController
         return Ok(new { GameId = gameIdTask });
     }
 
-    [HttpPatch("Join/{id}")]
+    [HttpPost("Join/{id}")]
     public async Task<IActionResult> Join(Guid id)
     {
         var playerId = GetPlayerId();
