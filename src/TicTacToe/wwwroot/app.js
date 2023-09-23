@@ -57,6 +57,19 @@ var oxo = {
     },
 
     controllers: {
+        refreshHeader: function () {
+            
+            oxo.ajax.getUser(user => {
+                updateUserModel(user);
+                if (!oxo.model.name) {
+                    $("#enter-name-modal").modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                }
+                oxo.ui.renderHeader(oxo.model);
+            });
+        },
         refreshGamesList: function () {
             oxo.ajax.getGames(oxo.ui.renderGameList);
         },
@@ -107,6 +120,7 @@ var oxo = {
             $("#enter-name-modal").modal('hide');
             oxo.ajax.setName(name, function () {
                 $("#enter-name-input").val("")
+                oxo.controllers.refreshHeader();
                 oxo.controllers.refreshGamesList();
             });
         },
@@ -122,6 +136,10 @@ var oxo = {
     },
 
     ui: {
+        renderHeader: function (data) {
+            var template = Handlebars.compile($("#header-template").html());
+            $("#header-placeholder").html(template(data));
+        },
         renderGameList: function (data) {
             var template = Handlebars.compile($("#games-template").html());
             $("#games-placeholder").html(template(data));
@@ -195,18 +213,8 @@ $(document).ready(function () {
         }
     });
 
-    oxo.ajax.getUser(user => {
-        updateUserModel(user);
-        if (!oxo.model.name) {
-            $("#enter-name-modal").modal({
-                backdrop: 'static',
-                keyboard: false
-            });
-        }
-
-        oxo.controllers.refreshGamesList();
-        oxo.controllers.refreshBoard();
-    });
+    oxo.controllers.refreshHeader();
+    oxo.controllers.refreshGamesList();
 
     $("#joinConfirmButton").bind('click', oxo.controllers.joinGame);
     $("#enterNameOk").bind('click', oxo.controllers.enterName);

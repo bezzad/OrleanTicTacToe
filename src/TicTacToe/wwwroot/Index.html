@@ -20,14 +20,13 @@
             font-size: 3rem;
         }
 
-        .cell a {
-            font-size: 1.5rem;
-        }
+            .cell a {
+                font-size: 1.5rem;
+            }
     </style>
 </head>
 <body>
-    <div class="container jumbotron">
-        <h1>Tic-Tac-Toe</h1>
+    <div id="header-placeholder" class="container jumbotron">
     </div>
     <div class="container">
     </div>
@@ -35,6 +34,11 @@
     </div>
     <div id="board-placeholder" class="container" style="display:none">
     </div>
+
+    <script id="header-template" type="text/x-handlebars-template">
+        <h1>Tic Tac Toe</h1>
+        <h4 style="margin:30px">Hi <b>{{name}}</b>!</h4>
+    </script>
 
     <script id="board-template" type="text/x-handlebars-template">
         <a href="javascript:void(0);" style="margin-top:8px;margin-bottom:8px" onclick="oxo.controllers.showGames();">&larr; Back to game list</a>
@@ -46,7 +50,8 @@
         </h3>
         <p>You are <strong>{{#if summary.gameStarter}}O{{else}}X{{/if}}</strong></p>
         <p>Playing against <strong>{{#each summary.usernames}}{{this}}{{/each}}</strong></p>
-        <p><strong>{{summary.numMoves}}</strong> moves made</p><br />
+        <p><strong>{{summary.numMoves}}</strong> moves made</p>
+        <br />
         <table class="table-bordered">
             <tr><td class="cell">{{{board.x0y0}}}</td><td class="cell">{{{board.x1y0}}}</td><td class="cell">{{{board.x2y0}}}</td></tr>
             <tr><td class="cell">{{{board.x0y1}}}</td><td class="cell">{{{board.x1y1}}}</td><td class="cell">{{{board.x2y1}}}</td></tr>
@@ -58,28 +63,28 @@
         <h3>Your Games</h3>
         <ul style="margin-bottom:25px">
             {{#each currentGames}}
-                <li>
+            <li>
 
-                    {{#if waiting}}
-                        <h4>
-                            {{name}}
-                        </h4>
-                        <strong>Waiting for another player</strong><br />
-                        <a class="btn btn-default" onclick="oxo.controllers.showInvite('{{gameId}}')" href="javascript:void(0);">Invite a friend</a>
-                    {{else}}
-                        <h4>
-                            <a href="javascript:void(0);" onclick="oxo.controllers.play('{{gameId}}')">
-                                {{name}}
-                            </a>
-                            {{#if yourMove}}
-                            &nbsp;<small><label class="label label-danger">Your Move</label></small>
-                            {{/if}}
-                        </h4>
-                        Playing against <strong>{{#each usernames}}{{this}}{{/each}}</strong><br />
-                        <strong>{{numMoves}}</strong> moves made
+                {{#if waiting}}
+                <h4>
+                    {{name}}
+                </h4>
+                <strong>Waiting for another player</strong><br />
+                <a class="btn btn-default" onclick="oxo.controllers.showInvite('{{gameId}}')" href="javascript:void(0);">Invite a friend</a>
+                {{else}}
+                <h4>
+                    <a href="javascript:void(0);" onclick="oxo.controllers.play('{{gameId}}')">
+                        {{name}}
+                    </a>
+                    {{#if yourMove}}
+                    &nbsp;<small><label class="label label-danger">Your Move</label></small>
                     {{/if}}
+                </h4>
+                Playing against <strong>{{#each usernames}}{{this}}{{/each}}</strong><br />
+                <strong>{{numMoves}}</strong> moves made
+                {{/if}}
 
-                </li>
+            </li>
             {{else}}
             <li><i>No games available</i></li>
             {{/each}}
@@ -97,7 +102,7 @@
                 <a class="btn btn-default" onclick="oxo.controllers.joinThisGame('{{gameId}}')" href="javascript:void(0);">Join</a>
             </li>
             {{else}}
-                <li><i>No games available</i></li>
+            <li><i>No games available</i></li>
             {{/each}}
 
         </ul>
