@@ -41,6 +41,8 @@
     </script>
 
     <script id="board-template" type="text/x-handlebars-template">
+        <a id="joinBtn" class="btn btn-primary" href="javascript:void(0);" onclick="oxo.controllers.refreshBoard();">Refresh</a>
+
         <a href="javascript:void(0);" style="margin-top:8px;margin-bottom:8px" onclick="oxo.controllers.showGames();">&larr; Back to game list</a>
         <h3>
             {{summary.name}}

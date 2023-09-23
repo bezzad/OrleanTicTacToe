@@ -218,7 +218,7 @@ $(document).ready(function () {
 
     $("#joinConfirmButton").bind('click', oxo.controllers.joinGame);
     $("#enterNameOk").bind('click', oxo.controllers.enterName);
-    $("enter-name-input").keyup(function (event) {
+    $("#enter-name-input").keyup(function (event) {
         if (event.keyCode == 13) {
             $("#enterNameOk").click();
         }
