@@ -11,10 +11,10 @@ public class BaseController : ControllerBase
 {
     private const string PlayerIdKey = "x-player-id";
     protected readonly IGrainFactory GrainFactory;
-    protected readonly IHubContext<GameHub> HubContext;
+    protected readonly IHubContext<GameHub, IGameClient> HubContext;
     protected readonly ILogger Logger;
 
-    public BaseController(ILogger logger, IGrainFactory grainFactory, IHubContext<GameHub> hubContext)
+    public BaseController(ILogger logger, IGrainFactory grainFactory, IHubContext<GameHub, IGameClient> hubContext)
     {
         GrainFactory = grainFactory;
         HubContext = hubContext;
@@ -43,5 +43,10 @@ public class BaseController : ControllerBase
     protected IPairingGrain GetPairingGrain()
     {
         return GrainFactory.GetGrain<IPairingGrain>(0);
+    }
+
+    protected IGameGrain GetGameGrain(Guid gameId)
+    {
+        return GrainFactory.GetGrain<IGameGrain>(gameId);
     }
 }

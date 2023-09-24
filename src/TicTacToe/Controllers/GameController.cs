@@ -8,7 +8,7 @@ namespace TicTacToe.Controllers;
 
 public class GameController : BaseController
 {
-    public GameController(ILogger<GameController> logger, IGrainFactory grainFactory, IHubContext<GameHub> hubContext)
+    public GameController(ILogger<GameController> logger, IGrainFactory grainFactory, IHubContext<GameHub, IGameClient> hubContext)
         : base(logger, grainFactory, hubContext) { }
 
     [HttpGet]
@@ -35,12 +35,15 @@ public class GameController : BaseController
     public async Task<IActionResult> CreateGame()
     {
         var player = GetPlayerGrain();
-        var gameIdTask = await player.CreateGame();
+        var gameId = await player.CreateGame();
+        
+        var pairing = GetPairingGrain();
+        var game = await pairing.GetGame(gameId);
 
         // Notify connected SignalR clients with some data:
-        await HubContext.Clients.All.SendAsync("broadcastMessage", "the weatherman", $" HIiii").ConfigureAwait(false);
+        await HubContext.Clients.All.OnNewGame(game).ConfigureAwait(false);
 
-        return Ok(new { GameId = gameIdTask });
+        return Ok(game);
     }
 
     [HttpPost("Join/{id}")]

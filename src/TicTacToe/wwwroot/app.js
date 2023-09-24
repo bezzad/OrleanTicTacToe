@@ -4,16 +4,28 @@ var oxo = {
         return ""; // "?r=" + Math.random();
     },
 
+    user: {
+        username: null,
+        id: null,
+        email: null,
+        wins: null,
+        loses: null
+    },
+
     model: {
-        currentGame: null,
-        gameList: [],
-        name: null,
-        id: null
+        currentGameId: null,
+        currentGames: [],
+        availableGames: []
     },
 
     ajax: {
         createGame: function (cb) {
-            $.post("/Game/CreateGame", cb);
+            $.post("/Game/CreateGame", function (data) {
+                if (data) {
+                    oxo.model.currentGames.push(data);
+                }
+                cb(oxo.model);
+            });
         },
         getGames: function (cb) {
             $.get("/Game" + oxo.rand(), function (data) {
@@ -22,20 +34,22 @@ var oxo = {
                     data.currentGames.forEach(function (x) {
                         x.waiting = x.state == 0;
                     });
+                    oxo.model.currentGames = data.currentGames;
+                    oxo.model.availableGames = data.availableGames;
                 }
-                cb(data);
+                cb(oxo.model);
             });
         },
         getMoves: function (cb) {
-            $.get("/Game/Moves/" + oxo.model.currentGame + oxo.rand(), cb);
+            $.get("/Game/Moves/" + oxo.model.currentGameId + oxo.rand(), cb);
         },
         makeMove: function (x, y, cb) {
-            $.post("/Game/Move/" + oxo.model.currentGame + "/?x=" + x + "&y=" + y, cb);
+            $.post("/Game/Move/" + oxo.model.currentGameId + "/?x=" + x + "&y=" + y, cb);
         },
         joinGame: function (gameId, cb) {
             $.post("/Game/Join/" + gameId, function (data) {
                 // check we have joined
-                oxo.model.currentGame = gameId;
+                oxo.model.currentGameId = gameId;
                 cb(data);
             });
         },
@@ -58,30 +72,29 @@ var oxo = {
 
     controllers: {
         refreshHeader: function () {
-
             oxo.ajax.getUser(user => {
                 updateUserModel(user);
-                if (!oxo.model.name) {
+                if (!oxo.user.username) {
                     $("#enter-name-modal").modal({
                         backdrop: 'static',
                         keyboard: false
                     });
                 }
-                oxo.ui.renderHeader(oxo.model);
+                oxo.ui.renderHeader(oxo.user);
             });
         },
         refreshGamesList: function () {
             oxo.ajax.getGames(oxo.ui.renderGameList);
         },
         refreshBoard: function () {
-            if (oxo.model.currentGame) {
+            if (oxo.model.currentGameId) {
                 oxo.ajax.getMoves(function (data) {
                     oxo.ui.renderBoard(data);
                 });
             }
         },
         play: function (gameId) {
-            oxo.model.currentGame = gameId;
+            oxo.model.currentGameId = gameId;
             oxo.controllers.refreshBoard();
             $("#board-placeholder").show("fast");
             $("#games-placeholder").hide("fast");
@@ -93,7 +106,7 @@ var oxo = {
             });
         },
         createGame: function () {
-            oxo.ajax.createGame(oxo.controllers.refreshGamesList);
+            oxo.ajax.createGame(oxo.ui.renderGameList);
         },
         showJoinDialog: function () {
             $("#join-game-modal").modal();
@@ -116,7 +129,7 @@ var oxo = {
         enterName: function () {
             var name = $("#enter-name-input").val().trim();
             if (!name) return;
-            oxo.model.name = name;
+            oxo.user.username = name;
             $("#enter-name-modal").modal('hide');
             oxo.ajax.setName(name, function () {
                 $("#enter-name-input").val("")
@@ -165,11 +178,7 @@ var oxo = {
 
 function updateUserModel(data) {
     if (data.id) {
-        oxo.model.id = data.id;
-        oxo.model.name = data.username;
-        oxo.model.email = data.email;
-        oxo.model.wins = data.wins;
-        oxo.model.loses = data.loses;
+        oxo.user = data;
         setCookie(playerIdKey, data.id, 30);
     }
 }
@@ -198,16 +207,16 @@ function getCookie(cname) {
 }
 
 $(document).ready(function () {
-    oxo.model.id = getCookie(playerIdKey);
+    oxo.user.id = getCookie(playerIdKey);
     $.ajaxSetup({
         beforeSend: function (xhr) {
             xhr.setRequestHeader('x-appname', "tic tac toe pure js client");
-            xhr.setRequestHeader(playerIdKey, oxo.model.id);
+            xhr.setRequestHeader(playerIdKey, oxo.user.id);
         },
         complete: function (xhr) {
             var id = xhr.getResponseHeader(playerIdKey);
             if (id) {
-                oxo.model.id = id;
+                oxo.user.id = id;
                 setCookie(playerIdKey, id, 30);
             }
         }
@@ -225,17 +234,23 @@ $(document).ready(function () {
     });
 
 
-
-
     var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
-    connection.on("broadcastMessage", function (user, message) {
+    connection.on("OnNewGame", function (game) {
         console.log("Signal received from Orlean, refresh games list...");
-        oxo.controllers.refreshGamesList();
+        if (game && game.ownerPlayerId != oxo.user.id) {
+            // just add other players games
+            oxo.model.availableGames.push(game);
+            oxo.ui.renderGameList(oxo.model);
+        }
+        console.log(game);
     });
 
     connection.start()
         .then(function () {
             console.log("SignalR connected.");
+            // TODO: authorize current user with signal to server.
+            // keep pair connectionId with playerId
+            // connection.invoke("signin", oxo.user);
         }).catch(err => {
             console.error(err.toString());
         });
