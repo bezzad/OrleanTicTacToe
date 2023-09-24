@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using TicTacToe.Grains;
 using TicTacToe.Hubs;
+using TicTacToe.Models;
 
 namespace TicTacToe.Controllers;
 
