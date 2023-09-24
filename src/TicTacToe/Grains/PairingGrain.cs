@@ -1,25 +1,25 @@
-using System.Runtime.Caching;
 using Orleans.Concurrency;
+using System.Collections.Concurrent;
 
 namespace TicTacToe.Grains;
 
 [Reentrant]
 public class PairingGrain : Grain, IPairingGrain
 {
-    private readonly MemoryCache _cache = new("pairing");
+    //  System.Runtime.Caching.MemoryCache _cache = new("pairing");
+    private static readonly ConcurrentDictionary<Guid, PairingSummary> _cache = new();
 
-    public Task AddGame(Guid gameId, string name)
+    public Task AddGame(Guid gameId, string name, Guid owner)
     {
-        _cache.Add(gameId.ToString(), name, new DateTimeOffset(DateTime.UtcNow).AddHours(1));
+        _cache.TryAdd(gameId, new PairingSummary { GameId = gameId, Name = name, OwnerPlayerId = owner });
         return Task.CompletedTask;
     }
 
     public Task RemoveGame(Guid gameId)
     {
-        _cache.Remove(gameId.ToString());
+        _cache.TryRemove(gameId, out var _);
         return Task.CompletedTask;
     }
 
-    public Task<PairingSummary[]> GetGames() => Task.FromResult(_cache.Select(x => new PairingSummary { GameId = Guid.Parse(x.Key), Name = x.Value as string }).ToArray());
-
+    public Task<PairingSummary[]> GetGames() => Task.FromResult(_cache.Values.ToArray());
 }

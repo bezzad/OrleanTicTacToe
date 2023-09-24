@@ -45,7 +45,7 @@ public class PlayerGrain : Grain, IPlayerGrain
         await gameGrain.SetName(name);
 
         var pairingGrain = GrainFactory.GetGrain<IPairingGrain>(0);
-        await pairingGrain.AddGame(gameId, name);
+        await pairingGrain.AddGame(gameId, name, playerId);
 
         return gameId;
     }
