@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using TicTacToe.Grains;
+using TicTacToe.Hubs;
 
 namespace TicTacToe.Controllers;
 
@@ -8,8 +11,15 @@ public class BaseController : ControllerBase
 {
     private const string PlayerIdKey = "x-player-id";
     protected readonly IGrainFactory GrainFactory;
+    protected readonly IHubContext<GameHub> HubContext;
+    protected readonly ILogger Logger;
 
-    public BaseController(IGrainFactory grainFactory) => GrainFactory = grainFactory;
+    public BaseController(ILogger logger, IGrainFactory grainFactory, IHubContext<GameHub> hubContext)
+    {
+        GrainFactory = grainFactory;
+        HubContext = hubContext;
+        Logger = logger;
+    }
 
     protected Guid GetPlayerId()
     {
@@ -22,5 +32,11 @@ public class BaseController : ControllerBase
         playerId = Guid.NewGuid();
         Response.Headers.Append(PlayerIdKey, playerId.ToString());
         return playerId;
+    }
+
+    protected IPlayerGrain GetPlayer()
+    {
+        var playerId = GetPlayerId();
+        return GrainFactory.GetGrain<IPlayerGrain>(playerId);
     }
 }

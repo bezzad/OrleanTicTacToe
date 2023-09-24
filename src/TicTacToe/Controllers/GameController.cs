@@ -7,18 +7,13 @@ namespace TicTacToe.Controllers;
 
 public class GameController : BaseController
 {
-    private readonly IHubContext<GameHub> _hubContext;
-
-    public GameController(IGrainFactory grainFactory, IHubContext<GameHub> hubContext) : base(grainFactory) 
-    { 
-        _hubContext = hubContext;
-    }
+    public GameController(ILogger<GameController> logger, IGrainFactory grainFactory, IHubContext<GameHub> hubContext)
+        : base(logger, grainFactory, hubContext) { }
 
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var guid = GetPlayerId();
-        var player = GrainFactory.GetGrain<IPlayerGrain>(guid);
+        var player = GetPlayer();
         var gamesTask = player.GetGameSummaries();
         var availableTask = player.GetAvailableGames();
         await Task.WhenAll(gamesTask, availableTask);
@@ -29,12 +24,11 @@ public class GameController : BaseController
     [HttpPost("CreateGame")]
     public async Task<IActionResult> CreateGame()
     {
-        var guid = GetPlayerId();
-        var player = GrainFactory.GetGrain<IPlayerGrain>(guid);
+        var player = GetPlayer();
         var gameIdTask = await player.CreateGame();
 
         // Notify connected SignalR clients with some data:
-        await _hubContext.Clients.All.SendAsync("broadcastMessage", "the weatherman", $" HIiii").ConfigureAwait(false);
+        await HubContext.Clients.All.SendAsync("broadcastMessage", "the weatherman", $" HIiii").ConfigureAwait(false);
 
         return Ok(new { GameId = gameIdTask });
     }
@@ -42,8 +36,7 @@ public class GameController : BaseController
     [HttpPost("Join/{id}")]
     public async Task<IActionResult> Join(Guid id)
     {
-        var playerId = GetPlayerId();
-        var player = GrainFactory.GetGrain<IPlayerGrain>(playerId);
+        var player = GetPlayer();
         var state = await player.JoinGame(id);
         return Ok(new { GameState = state });
     }

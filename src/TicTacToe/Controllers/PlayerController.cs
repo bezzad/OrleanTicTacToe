@@ -1,18 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using TicTacToe.Grains;
+using TicTacToe.Hubs;
 using TicTacToe.Models;
 
 namespace TicTacToe.Controllers;
 
 public class PlayerController : BaseController
 {
-    public PlayerController(IGrainFactory grainFactory) : base(grainFactory) { }
+    public PlayerController(ILogger<PlayerController> logger, IGrainFactory grainFactory, IHubContext<GameHub> hubContext) 
+        : base(logger, grainFactory, hubContext) { }
 
     [HttpGet("Info")]
     public async Task<ActionResult<User>> GetInfo()
     {
-        var guid = GetPlayerId();
-        var player = GrainFactory.GetGrain<IPlayerGrain>(guid);
+        var player = GetPlayer();
         var user = await player.GetUser();
 
         return Ok(user);
@@ -26,8 +28,7 @@ public class PlayerController : BaseController
             return BadRequest($"{nameof(username)} is null or empty!");
         }
 
-        var guid = GetPlayerId();
-        var player = GrainFactory.GetGrain<IPlayerGrain>(guid);
+        var player = GetPlayer();
         await player.SetUsername(username);
         var user = await player.GetUser();
         return Ok(user);
