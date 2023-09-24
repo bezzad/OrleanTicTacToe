@@ -8,5 +8,7 @@ public interface IPairingGrain : IGrainWithIntegerKey
 
     Task RemoveGame(Guid gameId);
 
+    Task<PairingSummary> GetGame(Guid gameId);
+
     Task<PairingSummary[]> GetGames();
 }

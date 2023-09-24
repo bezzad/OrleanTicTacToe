@@ -22,5 +22,15 @@ public class PairingGrain : Grain, IPairingGrain
         return Task.CompletedTask;
     }
 
+    public Task<PairingSummary> GetGame(Guid gameId)
+    {
+        if (_cache.TryGetValue(gameId, out var value))
+        {
+            return Task.FromResult(value);
+        }
+
+        return null;
+    }
+
     public Task<PairingSummary[]> GetGames() => Task.FromResult(_cache.Values.ToArray());
 }
