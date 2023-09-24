@@ -14,7 +14,7 @@ public class PlayerController : BaseController
     [HttpGet("Info")]
     public async Task<ActionResult<User>> GetInfo()
     {
-        var player = GetPlayer();
+        var player = GetPlayerGrain();
         var user = await player.GetUser();
 
         return Ok(user);
@@ -28,7 +28,7 @@ public class PlayerController : BaseController
             return BadRequest($"{nameof(username)} is null or empty!");
         }
 
-        var player = GetPlayer();
+        var player = GetPlayerGrain();
         await player.SetUsername(username);
         var user = await player.GetUser();
         return Ok(user);

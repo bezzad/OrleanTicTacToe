@@ -14,7 +14,7 @@ public class GameController : BaseController
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var player = GetPlayer();
+        var player = GetPlayerGrain();
         var gamesTask = player.GetGameSummaries();
         var availableTask = player.GetAvailableGames();
         await Task.WhenAll(gamesTask, availableTask);
@@ -22,10 +22,19 @@ public class GameController : BaseController
         return Ok(new { currentGames = gamesTask.Result, availableGames = availableTask.Result });
     }
 
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllGames()
+    {
+        var grain = GetPairingGrain();
+        var games = await grain.GetGames();
+
+        return Ok(games);
+    }
+
     [HttpPost("CreateGame")]
     public async Task<IActionResult> CreateGame()
     {
-        var player = GetPlayer();
+        var player = GetPlayerGrain();
         var gameIdTask = await player.CreateGame();
 
         // Notify connected SignalR clients with some data:
@@ -37,7 +46,7 @@ public class GameController : BaseController
     [HttpPost("Join/{id}")]
     public async Task<IActionResult> Join(Guid id)
     {
-        var player = GetPlayer();
+        var player = GetPlayerGrain();
         var state = await player.JoinGame(id);
         return Ok(new { GameState = state });
     }

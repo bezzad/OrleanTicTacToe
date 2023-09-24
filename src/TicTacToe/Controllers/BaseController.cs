@@ -34,9 +34,14 @@ public class BaseController : ControllerBase
         return playerId;
     }
 
-    protected IPlayerGrain GetPlayer()
+    protected IPlayerGrain GetPlayerGrain()
     {
         var playerId = GetPlayerId();
         return GrainFactory.GetGrain<IPlayerGrain>(playerId);
+    }
+
+    protected IPairingGrain GetPairingGrain()
+    {
+        return GrainFactory.GetGrain<IPairingGrain>(0);
     }
 }
