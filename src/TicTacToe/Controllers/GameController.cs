@@ -36,14 +36,16 @@ public class GameController : BaseController
     {
         var player = GetPlayerGrain();
         var gameId = await player.CreateGame();
-        
+        var gameGrain = GetGameGrain(gameId);
+        var gameSummery = await gameGrain.GetSummary(player.GetPrimaryKey());
+
         var pairing = GetPairingGrain();
-        var game = await pairing.GetGame(gameId);
+        var pairingSummary = await pairing.GetGame(gameId);
 
         // Notify connected SignalR clients with some data:
-        await HubContext.Clients.All.OnNewGame(game).ConfigureAwait(false);
+        await HubContext.Clients.All.OnNewGame(pairingSummary).ConfigureAwait(false);
 
-        return Ok(game);
+        return Ok(gameSummery);
     }
 
     [HttpPost("Join/{id}")]

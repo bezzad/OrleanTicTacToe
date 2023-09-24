@@ -22,6 +22,7 @@ var oxo = {
         createGame: function (cb) {
             $.post("/Game/CreateGame", function (data) {
                 if (data) {
+                    data.waiting = data.state == 0;
                     oxo.model.currentGames.push(data);
                 }
                 cb(oxo.model);
@@ -236,13 +237,22 @@ $(document).ready(function () {
 
     var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
     connection.on("OnNewGame", function (game) {
-        console.log("Signal received from Orlean, refresh games list...");
         if (game && game.ownerPlayerId != oxo.user.id) {
             // just add other players games
             oxo.model.availableGames.push(game);
             oxo.ui.renderGameList(oxo.model);
+            console.log("New game signal received from Orlean, added to available games");
+            console.log(game);
         }
-        console.log(game);
+    });
+
+    connection.on("OnUpdateBoard", function (board) {
+        if (board) {
+            // TODO: update board
+            oxo.ui.renderBoard();
+            console.log("New update board signal received from Orlean, update current board");
+            console.log(board);
+        }
     });
 
     connection.start()
