@@ -10,4 +10,5 @@ public interface IGameGrain : IGrainWithGuidKey
     Task<GameState> MakeMove(GameMove move);
     Task<GameSummary> GetSummary(Guid player);
     Task SetName(string name);
+    Task<Guid[]> GetPlayers();
 }

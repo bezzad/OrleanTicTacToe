@@ -16,5 +16,7 @@
         public string Username { get; set; }
         [Id(5)]
         public string Email { get; set; }
+        [Id(6)]
+        public string ClientConnectionId { get; set; }
     }
 }

@@ -1,35 +1,47 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using TicTacToe.Grains;
 using TicTacToe.Models;
 
 namespace TicTacToe.Hubs;
 
-public interface IGameClient
+public class GameHub : Hub
 {
-    public Task BroadcastMessage(string name, string message);
-    public Task OnNewGame(PairingSummary summary);
-}
+    private readonly IGrainFactory _grainFactory;
 
-public class GameHub : Hub<IGameClient>
-{
-    public async Task BroadcastMessage(string name, string message)
+    public GameHub(IGrainFactory grainFactory)
     {
-        await Clients.All.BroadcastMessage(name, message);
+        _grainFactory = grainFactory;
+    }
+
+    public async Task BroadcastMessage(string message)
+    {
+        await Clients.All.SendAsync(nameof(BroadcastMessage), message);
     }
 
     public async Task OnNewGame(PairingSummary summary)
     {
-        await Clients.Others.OnNewGame(summary);
+        await Clients.Others.SendAsync(nameof(OnNewGame), summary);
     }
 
-    public async Task CallerMessage(string user, string message)
+    public void OnUpdateBoard(string clientId, GameSummary summery)
     {
-        await Clients.Caller.BroadcastMessage(user, message);
+        Clients.Client(clientId).SendAsync(nameof(OnUpdateBoard), summery);
     }
 
     public override async Task OnConnectedAsync()
     {
-        //var userId = Context.User!.Identity!.Name!;
         var connectionId = Context.ConnectionId;
+        var httpContext = Context.GetHttpContext();
+        if (httpContext != null)
+        {
+            var playerToken = httpContext.Request.Cookies["x-player-id"];
+            if (Guid.TryParse(playerToken, out var playerId) && !string.IsNullOrWhiteSpace(connectionId))
+            {
+                var player = _grainFactory.GetGrain<IPlayerGrain>(playerId);
+                await player.SetConnectionId(connectionId);
+            }
+        }
+
         await base.OnConnectedAsync();
     }
 }

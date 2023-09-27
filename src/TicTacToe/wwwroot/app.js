@@ -101,9 +101,10 @@ var oxo = {
             $("#games-placeholder").hide("fast");
         },
         move: function (x, y) {
-            oxo.ajax.makeMove(x, y, function () {
-                oxo.controllers.refreshBoard();
-                oxo.controllers.refreshGamesList();
+            oxo.ajax.makeMove(x, y, function (data) {
+                if (data) {
+                    oxo.ui.renderBoard(data);
+                }
             });
         },
         createGame: function () {
@@ -246,12 +247,11 @@ $(document).ready(function () {
         }
     });
 
-    connection.on("OnUpdateBoard", function (board) {
-        if (board) {
-            // TODO: update board
-            oxo.ui.renderBoard();
-            console.log("New update board signal received from Orlean, update current board");
-            console.log(board);
+    connection.on("OnUpdateBoard", function (data) {
+        if (data) {
+            oxo.ui.renderBoard(data);
+            console.log("board updated");
+            console.log(data);
         }
     });
 

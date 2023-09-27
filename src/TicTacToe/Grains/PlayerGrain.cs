@@ -101,6 +101,12 @@ public class PlayerGrain : Grain, IPlayerGrain
         return Task.CompletedTask;
     }
 
+    public Task SetConnectionId(string connectionId)
+    {
+        _user.ClientConnectionId = connectionId;
+        return Task.CompletedTask;
+    }
+
     public Task<string> GetUsername() => Task.FromResult(_user.Username);
     public Task<User> GetUser() => Task.FromResult(_user);
 

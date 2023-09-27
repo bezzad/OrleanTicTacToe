@@ -8,7 +8,7 @@ namespace TicTacToe.Controllers;
 
 public class GameController : BaseController
 {
-    public GameController(ILogger<GameController> logger, IGrainFactory grainFactory, IHubContext<GameHub, IGameClient> hubContext)
+    public GameController(ILogger<GameController> logger, IGrainFactory grainFactory, IHubContext<GameHub> hubContext)
         : base(logger, grainFactory, hubContext) { }
 
     [HttpGet]
@@ -43,7 +43,7 @@ public class GameController : BaseController
         var pairingSummary = await pairing.GetGame(gameId);
 
         // Notify connected SignalR clients with some data:
-        await HubContext.Clients.All.OnNewGame(pairingSummary).ConfigureAwait(false);
+        await HubContext.Clients.All.SendAsync(nameof(GameHub.OnNewGame), pairingSummary).ConfigureAwait(false);
 
         return Ok(gameSummery);
     }
@@ -59,7 +59,7 @@ public class GameController : BaseController
     [HttpGet("Moves/{id}")]
     public async Task<IActionResult> GetMoves(Guid id)
     {
-        var game = GrainFactory.GetGrain<IGameGrain>(id);
+        var game = GetGameGrain(id);
         var moves = await game.GetMoves();
         var summary = await game.GetSummary(GetPlayerId());
         return Ok(new { moves, summary });
@@ -68,10 +68,27 @@ public class GameController : BaseController
     [HttpPost("Move/{id}")]
     public async Task<IActionResult> MakeMove(Guid id, int x, int y)
     {
-        var game = GrainFactory.GetGrain<IGameGrain>(id);
-        var move = new GameMove { PlayerId = GetPlayerId(), X = x, Y = y };
+        // move
+        var currentPlayer = GetPlayerId();
+        var game = GetGameGrain(id);
+        var move = new GameMove { PlayerId = currentPlayer, X = x, Y = y };
         var state = await game.MakeMove(move);
-        return Ok(state);
+
+        // create last state response for players
+        var moves = await game.GetMoves();
+        var playerGameSummary = await game.GetSummary(currentPlayer);
+
+        // notify next player to move
+        var players = await game.GetPlayers();
+        var nextPlayerId = players.Where(p => p != currentPlayer).FirstOrDefault();
+        var nextPlayer = GrainFactory.GetGrain<IPlayerGrain>(nextPlayerId);
+        var nextPlayerUser = await nextPlayer.GetUser();
+        var nextPlayerGameSummary = await game.GetSummary(nextPlayerId);
+        await HubContext.Clients.Client(nextPlayerUser.ClientConnectionId)
+            .SendAsync(nameof(GameHub.OnUpdateBoard), new { moves, summary = nextPlayerGameSummary })
+            .ConfigureAwait(false);
+
+        return Ok(new { moves, summary = playerGameSummary });
     }
 
     [HttpGet("State/{id}")]

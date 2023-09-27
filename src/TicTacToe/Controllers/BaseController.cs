@@ -11,10 +11,10 @@ public class BaseController : ControllerBase
 {
     private const string PlayerIdKey = "x-player-id";
     protected readonly IGrainFactory GrainFactory;
-    protected readonly IHubContext<GameHub, IGameClient> HubContext;
+    protected readonly IHubContext<GameHub> HubContext;
     protected readonly ILogger Logger;
 
-    public BaseController(ILogger logger, IGrainFactory grainFactory, IHubContext<GameHub, IGameClient> hubContext)
+    public BaseController(ILogger logger, IGrainFactory grainFactory, IHubContext<GameHub> hubContext)
     {
         GrainFactory = grainFactory;
         HubContext = hubContext;

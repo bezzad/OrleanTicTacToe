@@ -183,4 +183,9 @@ public class GameGrain : Grain, IGameGrain
         _name = name;
         return Task.CompletedTask;
     }
+
+    public Task<Guid[]> GetPlayers()
+    {        
+        return Task.FromResult(_playerIds.ToArray());
+    }
 }
