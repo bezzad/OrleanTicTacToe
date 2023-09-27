@@ -51,8 +51,12 @@ public class GameController : BaseController
     [HttpPost("Join/{id}")]
     public async Task<IActionResult> Join(Guid id)
     {
+        var playerId = GetPlayerId();
         var player = GetPlayerGrain();
         var state = await player.JoinGame(id);
+        var gameGrain = GetGameGrain(id);
+        await NotifyOtherPlayersSummary(playerId, gameGrain);
+
         return Ok(new { GameState = state });
     }
 
@@ -76,19 +80,27 @@ public class GameController : BaseController
 
         // create last state response for players
         var moves = await game.GetMoves();
-        var playerGameSummary = await game.GetSummary(currentPlayer);
+        var summary = await game.GetSummary(currentPlayer);
 
         // notify next player to move
-        var players = await game.GetPlayers();
-        var nextPlayerId = players.Where(p => p != currentPlayer).FirstOrDefault();
-        var nextPlayer = GrainFactory.GetGrain<IPlayerGrain>(nextPlayerId);
-        var nextPlayerUser = await nextPlayer.GetUser();
-        var nextPlayerGameSummary = await game.GetSummary(nextPlayerId);
-        await HubContext.Clients.Client(nextPlayerUser.ClientConnectionId)
-            .SendAsync(nameof(GameHub.OnUpdateBoard), new { moves, summary = nextPlayerGameSummary })
-            .ConfigureAwait(false);
+        await NotifyOtherPlayersSummary(currentPlayer, game);
 
-        return Ok(new { moves, summary = playerGameSummary });
+        return Ok(new { moves, summary });
+    }
+
+    private async Task NotifyOtherPlayersSummary(Guid currentPlayer, IGameGrain game)
+    {
+        var players = await game.GetPlayers();
+        var moves = await game.GetMoves();
+        foreach (var other in players.Where(p => p != currentPlayer))
+        {
+            var player = GrainFactory.GetGrain<IPlayerGrain>(other);
+            var user = await player.GetUser();
+            var summary = await game.GetSummary(other);
+            await HubContext.Clients.Client(user.ClientConnectionId)
+                .SendAsync(nameof(GameHub.OnUpdateBoard), new { moves, summary })
+                .ConfigureAwait(false);
+        }
     }
 
     [HttpGet("State/{id}")]

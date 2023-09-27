@@ -249,6 +249,12 @@ $(document).ready(function () {
 
     connection.on("OnUpdateBoard", function (data) {
         if (data) {
+            oxo.model.currentGameId = data.summary.gameId;
+            let currentGameIndex = oxo.model.currentGames.findIndex((game, index, obj) => {
+                return game.gameId == data.summary.gameId;
+            })
+            oxo.model.currentGames[currentGameIndex] = data.summary;
+            oxo.ui.renderGameList(oxo.model);
             oxo.ui.renderBoard(data);
             console.log("board updated");
             console.log(data);
