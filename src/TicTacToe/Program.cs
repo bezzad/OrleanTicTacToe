@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
 using System.Net;
 
@@ -65,7 +66,10 @@ public class Program
                 {
                     // To avoid port conflicts, each Web server must listen on a different port.
                     var instanceId = ctx.Configuration.GetValue<int>("InstanceId");
-                    kestrelOptions.ListenAnyIP(5000 + instanceId);
+                    kestrelOptions.Listen(IPAddress.Any, 5000 + instanceId, listenOptions =>
+                    {
+                        listenOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
+                    });
                 });
             })
             .ConfigureServices((context, services) =>

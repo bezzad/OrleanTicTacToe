@@ -23,10 +23,14 @@ public class Startup
 
         app.UseEndpoints(endpoints =>
         {
+            //endpoints.MapGet("/", context =>
+            //{
+            //    context.Response.Redirect("/index.html");
+            //    return Task.CompletedTask;
+            //});
             endpoints.MapControllers();
             endpoints.MapHub<GameHub>("/gameHub");
         });
-
         app.MapWhen(ctx => ctx.Request.Path == "/" || ctx.Request.Path == "/index.html", app =>
         {
             app.UseMiddleware<RedirectToFirstPageMiddleware>();
