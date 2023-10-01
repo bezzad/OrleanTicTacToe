@@ -1,5 +1,5 @@
 ﻿using TicTacToe.Hubs;
-using Microsoft.AspNetCore.SignalR;
+using TicTacToe.Middlewares;
 
 namespace TicTacToe;
 
@@ -25,6 +25,11 @@ public class Startup
         {
             endpoints.MapControllers();
             endpoints.MapHub<GameHub>("/gameHub");
+        });
+
+        app.MapWhen(ctx => ctx.Request.Path == "/" || ctx.Request.Path == "/index.html", app =>
+        {
+            app.UseMiddleware<RedirectToFirstPageMiddleware>();
         });
     }
 }

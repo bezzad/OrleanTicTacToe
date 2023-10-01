@@ -1,6 +1,5 @@
 using Microsoft.OpenApi.Models;
 using System.Net;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace TicTacToe;
 
