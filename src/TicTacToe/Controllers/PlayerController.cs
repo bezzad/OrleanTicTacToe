@@ -7,7 +7,8 @@ namespace TicTacToe.Controllers;
 
 public class PlayerController : BaseController
 {
-    public PlayerController(ILogger<PlayerController> logger, IGrainFactory grainFactory, IHubContext<GameHub> hubContext)
+    public PlayerController(ILogger<PlayerController> logger, 
+        IGrainFactory grainFactory, IHubContext<GameHub> hubContext)
         : base(logger, grainFactory, hubContext) { }
 
     [HttpGet("Info")]
