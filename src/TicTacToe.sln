@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solutions", "Solutions", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL Server Scripts", "SQL Server Scripts", "{8926BADB-4AED-45CC-A0A5-C20B938A170C}"
 	ProjectSection(SolutionItems) = preProject
+		CreateOrleansTables_SqlServer.sql = CreateOrleansTables_SqlServer.sql
 		SQLServer-Clustering.sql = SQLServer-Clustering.sql
 		SQLServer-Main.sql = SQLServer-Main.sql
 	EndProjectSection
