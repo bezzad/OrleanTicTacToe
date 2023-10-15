@@ -17,6 +17,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Grains\Grains.csproj" />
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
