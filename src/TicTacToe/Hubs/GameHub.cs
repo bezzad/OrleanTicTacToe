@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using TicTacToe.Grains;
-using TicTacToe.Models;
+using GrainInterfaces;
+using GrainInterfaces.Models;
 
 namespace TicTacToe.Hubs;
 

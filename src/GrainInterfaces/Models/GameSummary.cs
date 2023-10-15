@@ -1,4 +1,6 @@
-﻿namespace TicTacToe.Models;
+﻿using Orleans;
+
+namespace GrainInterfaces.Models;
 
 [GenerateSerializer]
 public struct GameSummary

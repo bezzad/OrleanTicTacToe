@@ -1,8 +1,10 @@
+using GrainInterfaces;
+using GrainInterfaces.Models;
+using Orleans;
 using Orleans.Concurrency;
 using System.Collections.Concurrent;
-using TicTacToe.Models;
 
-namespace TicTacToe.Grains;
+namespace Grains;
 
 [Reentrant]
 public class PairingGrain : Grain, IPairingGrain

@@ -1,6 +1,8 @@
-using TicTacToe.Models;
+using Orleans;
+using GrainInterfaces;
+using GrainInterfaces.Models;
 
-namespace TicTacToe.Grains;
+namespace Grains;
 
 public class PlayerGrain : Grain, IPlayerGrain
 {

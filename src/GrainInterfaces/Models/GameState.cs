@@ -1,4 +1,4 @@
-﻿namespace TicTacToe.Models;
+﻿namespace GrainInterfaces.Models;
 
 [Serializable]
 public enum GameState

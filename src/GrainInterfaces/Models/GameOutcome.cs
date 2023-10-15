@@ -1,4 +1,6 @@
-﻿[Serializable]
+﻿namespace GrainInterfaces.Models;
+
+[Serializable]
 public enum GameOutcome
 {
     Win,

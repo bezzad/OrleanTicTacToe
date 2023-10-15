@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacToe", "TicTacToe\TicTacToe.csproj", "{4AE1CEA4-DD3E-45C9-8296-A869636DB8D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacToe.Client", "TicTacToe\TicTacToe.Client.csproj", "{4AE1CEA4-DD3E-45C9-8296-A869636DB8D4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solutions", "Solutions", "{DB07DD5C-ED73-4174-9283-8E5C0193B558}"
 EndProject
@@ -13,6 +13,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL Server Scripts", "SQL S
 		SQLServer-Clustering.sql = SQLServer-Clustering.sql
 		SQLServer-Main.sql = SQLServer-Main.sql
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silo", "Silo\Silo.csproj", "{467DDE5F-C89F-435B-986C-A69A22EE2588}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrainInterfaces", "GrainInterfaces\GrainInterfaces.csproj", "{F33B9133-13DF-4C0B-ACE8-A2FD992FC048}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grains", "Grains\Grains.csproj", "{88F49469-944B-414B-ABFF-F020E43A8912}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +30,18 @@ Global
 		{4AE1CEA4-DD3E-45C9-8296-A869636DB8D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AE1CEA4-DD3E-45C9-8296-A869636DB8D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AE1CEA4-DD3E-45C9-8296-A869636DB8D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{467DDE5F-C89F-435B-986C-A69A22EE2588}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{467DDE5F-C89F-435B-986C-A69A22EE2588}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{467DDE5F-C89F-435B-986C-A69A22EE2588}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{467DDE5F-C89F-435B-986C-A69A22EE2588}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F33B9133-13DF-4C0B-ACE8-A2FD992FC048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F33B9133-13DF-4C0B-ACE8-A2FD992FC048}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F33B9133-13DF-4C0B-ACE8-A2FD992FC048}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F33B9133-13DF-4C0B-ACE8-A2FD992FC048}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88F49469-944B-414B-ABFF-F020E43A8912}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88F49469-944B-414B-ABFF-F020E43A8912}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88F49469-944B-414B-ABFF-F020E43A8912}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88F49469-944B-414B-ABFF-F020E43A8912}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

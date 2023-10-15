@@ -1,7 +1,9 @@
+using GrainInterfaces;
+using GrainInterfaces.Models;
+using Orleans;
 using Orleans.Concurrency;
-using TicTacToe.Models;
 
-namespace TicTacToe.Grains;
+namespace Grains;
 
 /// <summary>
 /// Orleans grain implementation class GameGrain
@@ -185,7 +187,7 @@ public class GameGrain : Grain, IGameGrain
     }
 
     public Task<Guid[]> GetPlayers()
-    {        
+    {
         return Task.FromResult(_playerIds.ToArray());
     }
 }

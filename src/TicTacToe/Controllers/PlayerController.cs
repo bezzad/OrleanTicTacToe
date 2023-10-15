@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using TicTacToe.Hubs;
-using TicTacToe.Models;
+using GrainInterfaces.Models;
 
 namespace TicTacToe.Controllers;
 
 public class PlayerController : BaseController
 {
-    public PlayerController(ILogger<PlayerController> logger, 
-        IGrainFactory grainFactory, IHubContext<GameHub> hubContext)
-        : base(logger, grainFactory, hubContext) { }
+    public PlayerController(ILogger<PlayerController> logger,
+        IClusterClient client, IHubContext<GameHub> hubContext)
+        : base(logger, client, hubContext) { }
 
     [HttpGet("Info")]
     public async Task<ActionResult<User>> GetInfo()

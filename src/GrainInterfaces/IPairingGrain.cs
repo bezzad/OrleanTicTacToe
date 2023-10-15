@@ -1,6 +1,7 @@
-using TicTacToe.Models;
+using GrainInterfaces.Models;
+using Orleans;
 
-namespace TicTacToe.Grains;
+namespace GrainInterfaces;
 
 public interface IPairingGrain : IGrainWithIntegerKey
 {

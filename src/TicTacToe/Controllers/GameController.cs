@@ -1,15 +1,15 @@
+using GrainInterfaces;
+using GrainInterfaces.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using TicTacToe.Grains;
 using TicTacToe.Hubs;
-using TicTacToe.Models;
 
 namespace TicTacToe.Controllers;
 
 public class GameController : BaseController
 {
-    public GameController(ILogger<GameController> logger, IGrainFactory grainFactory, IHubContext<GameHub> hubContext)
-        : base(logger, grainFactory, hubContext) { }
+    public GameController(ILogger<GameController> logger, IClusterClient client, IHubContext<GameHub> hubContext)
+        : base(logger, client, hubContext) { }
 
     [HttpGet]
     public async Task<IActionResult> Get()
@@ -94,7 +94,7 @@ public class GameController : BaseController
         var moves = await game.GetMoves();
         foreach (var other in players.Where(p => p != currentPlayer))
         {
-            var player = GrainFactory.GetGrain<IPlayerGrain>(other);
+            var player = Client.GetGrain<IPlayerGrain>(other);
             var user = await player.GetUser();
             var summary = await game.GetSummary(other);
             await HubContext.Clients.Client(user.ClientConnectionId)
@@ -106,7 +106,7 @@ public class GameController : BaseController
     [HttpGet("State/{id}")]
     public async Task<IActionResult> QueryGame(Guid id)
     {
-        var game = GrainFactory.GetGrain<IGameGrain>(id);
+        var game = Client.GetGrain<IGameGrain>(id);
         var state = await game.GetState();
         return Ok(state);
 
