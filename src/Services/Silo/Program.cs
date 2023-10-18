@@ -9,7 +9,7 @@ namespace SiloHost
         {
             // Configure the host
             using var app = Host.CreateDefaultBuilder(args).UseOrleansSilo().Build();
-
+            
             await app.RunAsync();
         }
     }

@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solutions", "Solutions", "{DB07DD5C-ED73-4174-9283-8E5C0193B558}"
+	ProjectSection(SolutionItems) = preProject
+		RunSilos.bat = RunSilos.bat
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL Server Scripts", "SQL Server Scripts", "{8926BADB-4AED-45CC-A0A5-C20B938A170C}"
 	ProjectSection(SolutionItems) = preProject

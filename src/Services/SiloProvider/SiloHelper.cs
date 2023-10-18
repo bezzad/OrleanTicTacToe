@@ -14,23 +14,6 @@ public static class SiloHelper
             .UseConsoleLifetime();
     }
 
-    public static IHostBuilder UseOrleansMasterSilo(this IHostBuilder host)
-    {
-        return host.UseOrleans((ctx, siloBuilder) =>
-        {
-            CreateSilo(ctx, siloBuilder).UseDashboard(options =>
-            {
-                // https://github.com/OrleansContrib/OrleansDashboard
-                options.Username = "bezzad";
-                options.Password = "1234";
-                options.Host = "*";
-                options.Port = 8080;
-                options.HostSelf = true;
-                options.CounterUpdateIntervalMs = 1000;
-            });
-        }).UseConsoleLifetime();
-    }
-
     private static ISiloBuilder CreateSilo(HostBuilderContext ctx, ISiloBuilder siloBuilder)
     {
         // In order to support multiple hosts forming a cluster,
@@ -65,10 +48,21 @@ public static class SiloHelper
             // IP Address to advertise in the cluster
             options.AdvertisedIPAddress = IPAddress.Loopback;
             // The socket used for client-to-silo will bind to this endpoint
-            options.GatewayListeningEndpoint = new IPEndPoint(IPAddress.Any, 30_000 + instanceId);
+            //options.GatewayListeningEndpoint = new IPEndPoint(IPAddress.Any, 40_000 + instanceId);
             // The socket used by the gateway will bind to this endpoint
-            options.SiloListeningEndpoint = new IPEndPoint(IPAddress.Any, 50_000 + instanceId);
+            //options.SiloListeningEndpoint = new IPEndPoint(IPAddress.Any, 50_000 + instanceId);
+        })
+        .UseDashboard(options =>
+        {
+            // https://github.com/OrleansContrib/OrleansDashboard
+            //options.Username = "bezzad";
+            //options.Password = "1234";
+            options.Host = "*";
+            options.Port = 8080 + instanceId;
+            options.HostSelf = true;
+            options.CounterUpdateIntervalMs = 1000;
         });
+        //.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(ValueGrain).Assembly).WithReferences());
     }
 
     private static int GetInstanceId(this string[] args)

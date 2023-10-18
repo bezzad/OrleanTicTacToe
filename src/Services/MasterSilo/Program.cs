@@ -8,7 +8,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Host.UseOrleansMasterSilo();
+        builder.Host.UseOrleansSilo();
 
         // Add services to the container.
         builder.Services.AddEndpointsApiExplorer();
@@ -16,6 +16,13 @@ public class Program
         var app = builder.Build();
         app.UseHttpsRedirection();
         app.Map("/dashboard", x => x.UseOrleansDashboard());
+        app.UseOrleansDashboard();
+
+        app.Run(x =>
+        {
+            x.Response.Redirect("http://127.0.0.1:8080/dashboard");
+            return Task.CompletedTask;
+        });
 
         await app.RunAsync();
     }
