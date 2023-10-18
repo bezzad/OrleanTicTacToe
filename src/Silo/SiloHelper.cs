@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orleans.Configuration;
 using System.Net;
@@ -38,18 +39,16 @@ public static class SiloHelper
         var args = Environment.GetCommandLineArgs();
         var instanceId = args.GetInstanceId();
 
-        // siloBuilder.UseLocalhostClustering()
-
-        // siloBuilder.UseAdoNetClustering(options =>
-        // {
-        //     options.Invariant = "System.Data.SqlClient";
-        //     options.ConnectionString = ctx.Configuration.GetConnectionString("OrleansDb");
-        // })
-
-        //.UseRedisClustering(ctx.Configuration.GetConnectionString("Redis"))
+        
 
         return siloBuilder
-        .UseLocalhostClustering()
+        // .UseLocalhostClustering()
+         .UseAdoNetClustering(options =>
+         {
+             options.Invariant = "System.Data.SqlClient";
+             options.ConnectionString = ctx.Configuration.GetConnectionString("OrleansDb");
+         })
+        //.UseRedisClustering(ctx.Configuration.GetConnectionString("Redis"))
         .ConfigureLogging(logging => logging.AddConsole())
         //.UseLinuxEnvironmentStatistics()
         .Configure<ClusterOptions>(options =>
