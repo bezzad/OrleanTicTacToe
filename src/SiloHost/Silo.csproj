@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silo\SiloProvider.csproj" />
+    <ProjectReference Include="..\SiloProvider\SiloProvider.csproj" />
   </ItemGroup>
 
 </Project>

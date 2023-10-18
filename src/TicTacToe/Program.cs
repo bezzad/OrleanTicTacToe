@@ -14,7 +14,7 @@ public class Program
         var builder = Host.CreateDefaultBuilder(args);
         builder.UseOrleansClient(client =>
             {
-                client.UseLocalhostClustering(30_000, "orleansGame", "tictactoe");
+                client.UseLocalhostClustering(30_000, serviceId: "orleansServiceTictactoe", clusterId: "orleansClusterTictactoe");
             })
             .ConfigureLogging(logging => logging.AddConsole())
             .ConfigureWebHostDefaults(webBuilder =>

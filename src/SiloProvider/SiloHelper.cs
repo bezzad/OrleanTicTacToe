@@ -39,7 +39,7 @@ public static class SiloHelper
         var args = Environment.GetCommandLineArgs();
         var instanceId = args.GetInstanceId();
 
-        
+        siloBuilder.AddActivityPropagation();
 
         return siloBuilder
         // .UseLocalhostClustering()
@@ -53,8 +53,8 @@ public static class SiloHelper
         //.UseLinuxEnvironmentStatistics()
         .Configure<ClusterOptions>(options =>
         {
-            options.ClusterId = "tictactoe";
-            options.ServiceId = "orleansGame";
+            options.ClusterId = "orleansClusterTictactoe";
+            options.ServiceId = "orleansServiceTictactoe";
         })
         .Configure<EndpointOptions>(options =>
         {

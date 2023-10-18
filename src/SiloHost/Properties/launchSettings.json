@@ -2,7 +2,7 @@
   "profiles": {
     "SiloHost": {
       "commandName": "Project",
-      "commandLineArgs": "-instanceId 1"
+      "commandLineArgs": "-instanceId 2"
     }
   }
 }
