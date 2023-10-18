@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Grains\Grains.csproj" />
+    <ProjectReference Include="..\..\Actors\Grains\Grains.csproj" />
   </ItemGroup>
 
 </Project>
