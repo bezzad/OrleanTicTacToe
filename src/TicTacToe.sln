@@ -12,13 +12,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL Server Scripts", "SQL S
 		CreateOrleansTables_SqlServer.sql = CreateOrleansTables_SqlServer.sql
 		SQLServer-Clustering.sql = SQLServer-Clustering.sql
 		SQLServer-Main.sql = SQLServer-Main.sql
+		SQLServer-Persistence.sql = SQLServer-Persistence.sql
+		SQLServer-Reminders.sql = SQLServer-Reminders.sql
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silo", "Silo\Silo.csproj", "{467DDE5F-C89F-435B-986C-A69A22EE2588}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SiloProvider", "Silo\SiloProvider.csproj", "{467DDE5F-C89F-435B-986C-A69A22EE2588}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrainInterfaces", "GrainInterfaces\GrainInterfaces.csproj", "{F33B9133-13DF-4C0B-ACE8-A2FD992FC048}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrainInterfaces", "GrainInterfaces\GrainInterfaces.csproj", "{F33B9133-13DF-4C0B-ACE8-A2FD992FC048}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grains", "Grains\Grains.csproj", "{88F49469-944B-414B-ABFF-F020E43A8912}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grains", "Grains\Grains.csproj", "{88F49469-944B-414B-ABFF-F020E43A8912}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterSilo", "MasterSilo\MasterSilo.csproj", "{010C2052-1FDE-4A29-BF4A-1797060817C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silo", "SiloHost\Silo.csproj", "{2F8ED511-1286-45C5-BA8A-5F71254A662F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Servers", "Servers", "{AB63786A-92E9-4365-B3E8-CBA69101F725}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{EE3C07A0-4BE2-4154-9C46-1AEA260B44A5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actors", "Actors", "{5068A264-E4AE-4D8A-9EDB-04DDCD1BD044}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,12 +54,26 @@ Global
 		{88F49469-944B-414B-ABFF-F020E43A8912}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88F49469-944B-414B-ABFF-F020E43A8912}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88F49469-944B-414B-ABFF-F020E43A8912}.Release|Any CPU.Build.0 = Release|Any CPU
+		{010C2052-1FDE-4A29-BF4A-1797060817C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{010C2052-1FDE-4A29-BF4A-1797060817C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{010C2052-1FDE-4A29-BF4A-1797060817C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{010C2052-1FDE-4A29-BF4A-1797060817C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F8ED511-1286-45C5-BA8A-5F71254A662F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F8ED511-1286-45C5-BA8A-5F71254A662F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F8ED511-1286-45C5-BA8A-5F71254A662F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F8ED511-1286-45C5-BA8A-5F71254A662F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{4AE1CEA4-DD3E-45C9-8296-A869636DB8D4} = {EE3C07A0-4BE2-4154-9C46-1AEA260B44A5}
 		{8926BADB-4AED-45CC-A0A5-C20B938A170C} = {DB07DD5C-ED73-4174-9283-8E5C0193B558}
+		{467DDE5F-C89F-435B-986C-A69A22EE2588} = {5068A264-E4AE-4D8A-9EDB-04DDCD1BD044}
+		{F33B9133-13DF-4C0B-ACE8-A2FD992FC048} = {5068A264-E4AE-4D8A-9EDB-04DDCD1BD044}
+		{88F49469-944B-414B-ABFF-F020E43A8912} = {5068A264-E4AE-4D8A-9EDB-04DDCD1BD044}
+		{010C2052-1FDE-4A29-BF4A-1797060817C7} = {AB63786A-92E9-4365-B3E8-CBA69101F725}
+		{2F8ED511-1286-45C5-BA8A-5F71254A662F} = {AB63786A-92E9-4365-B3E8-CBA69101F725}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F5877C73-D72D-4765-B71E-7852572FDB3A}
