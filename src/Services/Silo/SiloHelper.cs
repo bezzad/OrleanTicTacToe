@@ -36,6 +36,11 @@ public static class SiloHelper
             options.Invariant = "System.Data.SqlClient";
             options.ConnectionString = ctx.Configuration.GetConnectionString("OrleansDb");
         })
+        .AddAdoNetGrainStorage("OrleansStorage", options =>
+        {
+            options.Invariant = "System.Data.SqlClient";
+            options.ConnectionString = ctx.Configuration.GetConnectionString("OrleansDb");
+        })
         .ConfigureLogging(logging => logging.AddConsole())
         //.UseLinuxEnvironmentStatistics()
         .Configure<ClusterOptions>(options =>

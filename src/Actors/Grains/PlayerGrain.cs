@@ -1,40 +1,40 @@
-using Orleans;
 using GrainInterfaces;
 using GrainInterfaces.Models;
+using Orleans.Providers;
 
 namespace Grains;
 
-public class PlayerGrain : Grain, IPlayerGrain
+[StorageProvider(ProviderName = "OrleansStorage")]
+public class PlayerGrain : Grain<User>, IPlayerGrain
 {
-    private List<Guid> _activeGames = new();
-    private List<Guid> _pastGames = new();
-    private User _user;
-
-    public override Task OnActivateAsync(CancellationToken token)
+    public override async Task OnActivateAsync(CancellationToken token)
     {
-        _activeGames = new List<Guid>();
-        _pastGames = new List<Guid>();
+        await ReadStateAsync();
         var playerId = this.GetPrimaryKey();  // our player id
-        _user = new()
+        if (playerId != Guid.Empty)
         {
-            Id = playerId
-        };
+            await ReadStateAsync();
+            State.Id = playerId;
+        }
 
-        return base.OnActivateAsync(token);
+        State.ActiveGames ??= new List<Guid>();
+        State.PastGames ??= new List<Guid>();
+
+        await base.OnActivateAsync(token);
     }
 
     public async Task<PairingSummary[]> GetAvailableGames()
     {
         var grain = GrainFactory.GetGrain<IPairingGrain>(0);
         var games = await grain.GetGames();
-        var availableGames = games.Where(x => !_activeGames.Contains(x.GameId)).ToArray();
+        var availableGames = games.Where(x => !State.ActiveGames.Contains(x.GameId)).ToArray();
         return availableGames;
     }
 
     // create a new game, and add oursleves to that game
     public async Task<Guid> CreateGame()
     {
-        _user.GamesStarted++;
+        State.GamesStarted++;
 
         var gameId = Guid.NewGuid();
         var gameGrain = GrainFactory.GetGrain<IGameGrain>(gameId);  // create new game
@@ -42,12 +42,13 @@ public class PlayerGrain : Grain, IPlayerGrain
         // add ourselves to the game
         var playerId = this.GetPrimaryKey();  // our player id
         await gameGrain.AddPlayerToGame(playerId);
-        _activeGames.Add(gameId);
-        var name = $"{_user.Username}'s {AddOrdinalSuffix(_user.GamesStarted.ToString())} game";
+        State.ActiveGames.Add(gameId);
+        var name = $"{State.Username}'s {AddOrdinalSuffix(State.GamesStarted.ToString())} game";
         await gameGrain.SetName(name);
 
         var pairingGrain = GrainFactory.GetGrain<IPairingGrain>(0);
         await pairingGrain.AddGame(gameId, name, playerId);
+        await WriteStateAsync();
 
         return gameId;
     }
@@ -56,38 +57,36 @@ public class PlayerGrain : Grain, IPlayerGrain
     public async Task<GameState> JoinGame(Guid gameId)
     {
         var gameGrain = GrainFactory.GetGrain<IGameGrain>(gameId);
-
         var state = await gameGrain.AddPlayerToGame(this.GetPrimaryKey());
-        _activeGames.Add(gameId);
-
+        State.ActiveGames.Add(gameId);
         var pairingGrain = GrainFactory.GetGrain<IPairingGrain>(0);
         await pairingGrain.RemoveGame(gameId);
+        await WriteStateAsync();
 
         return state;
     }
 
     // leave game when it is over
-    public Task LeaveGame(Guid gameId, GameOutcome outcome)
+    public async Task LeaveGame(Guid gameId, GameOutcome outcome)
     {
         // manage game list
-        _activeGames.Remove(gameId);
-        _pastGames.Add(gameId);
+        State.ActiveGames.Remove(gameId);
+        State.PastGames.Add(gameId);
+        await WriteStateAsync();
 
         // manage running total
         _ = outcome switch
         {
-            GameOutcome.Win => _user.Wins++,
-            GameOutcome.Lose => _user.Loses++,
+            GameOutcome.Win => State.Wins++,
+            GameOutcome.Lose => State.Loses++,
             _ => 0
         };
-
-        return Task.CompletedTask;
     }
 
     public async Task<List<GameSummary>> GetGameSummaries()
     {
         var tasks = new List<Task<GameSummary>>();
-        foreach (var gameId in _activeGames)
+        foreach (var gameId in State.ActiveGames)
         {
             var game = GrainFactory.GetGrain<IGameGrain>(gameId);
             tasks.Add(game.GetSummary(this.GetPrimaryKey()));
@@ -97,20 +96,20 @@ public class PlayerGrain : Grain, IPlayerGrain
         return tasks.Select(x => x.Result).ToList();
     }
 
-    public Task SetUsername(string name)
+    public async Task SetUsername(string name)
     {
-        _user.Username = name;
-        return Task.CompletedTask;
+        State.Username = name;
+        await WriteStateAsync();
     }
 
-    public Task SetConnectionId(string connectionId)
+    public async Task SetConnectionId(string connectionId)
     {
-        _user.ClientConnectionId = connectionId;
-        return Task.CompletedTask;
+        State.ClientConnectionId = connectionId;
+        await WriteStateAsync();
     }
 
-    public Task<string> GetUsername() => Task.FromResult(_user.Username);
-    public Task<User> GetUser() => Task.FromResult(_user);
+    public Task<string> GetUsername() => Task.FromResult(State.Username);
+    public Task<User> GetUser() => Task.FromResult(State);
 
     private static string AddOrdinalSuffix(string number)
     {
