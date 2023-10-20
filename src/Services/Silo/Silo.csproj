@@ -26,6 +26,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="7.2.2" />
     <PackageReference Include="Microsoft.Orleans.Clustering.Redis" Version="7.2.2" />
+    <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="7.2.2" />
     <PackageReference Include="Microsoft.Orleans.Server" Version="7.2.2" />
     <PackageReference Include="OrleansDashboard" Version="7.2.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />

@@ -2,10 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orleans.Configuration;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Net;
-using System.Runtime.InteropServices;
 
 namespace Silo;
 
@@ -74,54 +71,5 @@ public static class SiloHelper
         new Uri("http://127.0.0.1:" + dashboardPort).OpenBrowser();
 
         return siloBuilder;
-    }
-
-    private static int GetInstanceId(this string[] args)
-    {
-        for (int i = 0; i < args.Length - 1; i++)
-        {
-            if (args[i].Trim(' ', '-').Equals("instanceid", StringComparison.OrdinalIgnoreCase) &&
-                int.TryParse(args[i + 1], out var instanceId))
-            {
-                return instanceId;
-            }
-        }
-
-        return 0;
-    }
-
-    private static void OpenBrowser(this Uri uri)
-    {
-        try
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                Process.Start(new ProcessStartInfo(uri.ToString()) { UseShellExecute = true, CreateNoWindow = true });
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                Process.Start("xdg-open", uri.ToString());
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                Process.Start("open", uri.ToString());
-            }
-        }
-        catch (Exception exp)
-        {
-            Console.Error.WriteLine(exp.Message);
-        }
-    }
-
-    private static int GetActiveSiloCount(string connectionString)
-    {
-        const string query = @"SELECT COUNT(*) FROM OrleansMembershipTable WHERE Status = 3 and DeploymentId = '" + 
-            ClusterId + "'"; // 3 is 'Active' status
-
-        using var connection = new SqlConnection(connectionString);
-        connection.Open();
-        using var cmd = new SqlCommand(query, connection);
-        var result = cmd.ExecuteScalar();
-        return Convert.ToInt32(result);
     }
 }
