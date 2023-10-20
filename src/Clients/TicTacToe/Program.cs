@@ -4,9 +4,9 @@ using System.Net;
 
 namespace TicTacToe;
 
-public class Program
+internal class Program
 {
-    public static async Task Main(string[] args) =>
+    static async Task Main(string[] args) =>
             await CreateHostBuilder(args).Build().RunAsync().ConfigureAwait(false);
 
     public static IHostBuilder CreateHostBuilder(string[] args)

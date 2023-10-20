@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
 
-namespace SiloProvider;
+namespace Silo;
 
 public static class SiloHelper
 {

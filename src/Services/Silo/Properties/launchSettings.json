@@ -1,8 +1,44 @@
 {
   "profiles": {
-    "SiloHost": {
+    "http": {
       "commandName": "Project",
-      "commandLineArgs": "-instanceId 2"
+      "commandLineArgs": "-instanceId 0",
+      "launchBrowser": true,
+      "launchUrl": "",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5038"
+    },
+    "https": {
+      "commandName": "Project",
+      "commandLineArgs": "-instanceId 0",
+      "launchBrowser": true,
+      "launchUrl": "",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7061;http://localhost:5038"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "commandLineArgs": "-instanceId 0",
+      "launchBrowser": true,
+      "launchUrl": "",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:63163",
+      "sslPort": 44376
     }
   }
 }
