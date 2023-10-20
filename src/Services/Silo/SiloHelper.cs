@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orleans.Configuration;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -10,6 +11,8 @@ namespace Silo;
 
 public static class SiloHelper
 {
+    const string ClusterId = "orleansClusterTictactoe";
+
     public static IHostBuilder UseOrleansSilo(this IHostBuilder host)
     {
         return host.UseOrleans((ctx, siloBuilder) => CreateSilo(ctx, siloBuilder))
@@ -40,7 +43,7 @@ public static class SiloHelper
         //.UseLinuxEnvironmentStatistics()
         .Configure<ClusterOptions>(options =>
         {
-            options.ClusterId = "orleansClusterTictactoe";
+            options.ClusterId = ClusterId;
             options.ServiceId = "orleansServiceTictactoe";
         })
         .Configure<EndpointOptions>(options =>
@@ -108,5 +111,17 @@ public static class SiloHelper
         {
             Console.Error.WriteLine(exp.Message);
         }
+    }
+
+    private static int GetActiveSiloCount(string connectionString)
+    {
+        const string query = @"SELECT COUNT(*) FROM OrleansMembershipTable WHERE Status = 3 and DeploymentId = '" + 
+            ClusterId + "'"; // 3 is 'Active' status
+
+        using var connection = new SqlConnection(connectionString);
+        connection.Open();
+        using var cmd = new SqlCommand(query, connection);
+        var result = cmd.ExecuteScalar();
+        return Convert.ToInt32(result);
     }
 }

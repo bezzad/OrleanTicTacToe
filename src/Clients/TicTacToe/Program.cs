@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
+using Orleans.Configuration;
 using System.Net;
 
 namespace TicTacToe;
@@ -12,9 +13,19 @@ internal class Program
     public static IHostBuilder CreateHostBuilder(string[] args)
     {
         var builder = Host.CreateDefaultBuilder(args);
-        builder.UseOrleansClient(client =>
+        builder.UseOrleansClient((ctx, clientBuilder) =>
             {
-                client.UseLocalhostClustering(30_000, serviceId: "orleansServiceTictactoe", clusterId: "orleansClusterTictactoe");
+                clientBuilder
+                .UseAdoNetClustering(options =>
+                {
+                    options.Invariant = "System.Data.SqlClient";
+                    options.ConnectionString = ctx.Configuration.GetConnectionString("OrleansDb");
+                })
+                .Configure<ClusterOptions>(options =>
+                {
+                    options.ClusterId = "orleansClusterTictactoe";
+                    options.ServiceId = "orleansServiceTictactoe";
+                });
             })
             .ConfigureLogging(logging => logging.AddConsole())
             .ConfigureWebHostDefaults(webBuilder =>

@@ -31,4 +31,8 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Actors\Grains\Grains.csproj" />
+  </ItemGroup>
+
 </Project>
