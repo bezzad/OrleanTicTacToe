@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orleans.Configuration;
+using System.Diagnostics;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace SiloProvider;
 
@@ -23,10 +25,10 @@ public static class SiloHelper
         var instanceId = args.GetInstanceId();
         var siloPort = 11_111 + instanceId;
         var gatewayPort = 30_000 + instanceId;
+        var dashboardPort = 8080 + instanceId;
 
-        siloBuilder.AddActivityPropagation();
+        siloBuilder.AddActivityPropagation()
 
-        return siloBuilder
         //.UseLocalhostClustering()
         //.UseRedisClustering(ctx.Configuration.GetConnectionString("Redis"))
         .UseAdoNetClustering(options =>
@@ -60,11 +62,15 @@ public static class SiloHelper
             //options.Username = "bezzad";
             //options.Password = "1234";
             options.Host = "*";
-            options.Port = 8080 + instanceId;
+            options.Port = dashboardPort;
             options.HostSelf = true;
             options.CounterUpdateIntervalMs = 1000;
         });
         //.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(ValueGrain).Assembly).WithReferences());
+
+        new Uri("http://127.0.0.1:" + dashboardPort).OpenBrowser();
+
+        return siloBuilder;
     }
 
     private static int GetInstanceId(this string[] args)
@@ -79,5 +85,28 @@ public static class SiloHelper
         }
 
         return 0;
+    }
+
+    private static void OpenBrowser(this Uri uri)
+    {
+        try
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Process.Start(new ProcessStartInfo(uri.ToString()) { UseShellExecute = true, CreateNoWindow = true });
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Process.Start("xdg-open", uri.ToString());
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                Process.Start("open", uri.ToString());
+            }
+        }
+        catch (Exception exp)
+        {
+            Console.Error.WriteLine(exp.Message);
+        }
     }
 }
