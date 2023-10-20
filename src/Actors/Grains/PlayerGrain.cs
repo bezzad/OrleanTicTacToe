@@ -11,12 +11,7 @@ public class PlayerGrain : Grain<User>, IPlayerGrain
     {
         await ReadStateAsync();
         var playerId = this.GetPrimaryKey();  // our player id
-        if (playerId != Guid.Empty)
-        {
-            await ReadStateAsync();
-            State.Id = playerId;
-        }
-
+        State.Id = playerId;
         State.ActiveGames ??= new List<Guid>();
         State.PastGames ??= new List<Guid>();
 

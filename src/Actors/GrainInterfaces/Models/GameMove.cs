@@ -1,6 +1,4 @@
-﻿using Orleans;
-
-namespace GrainInterfaces.Models;
+﻿namespace GrainInterfaces.Models;
 
 [GenerateSerializer]
 public struct GameMove
