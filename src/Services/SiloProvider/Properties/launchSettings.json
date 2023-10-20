@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Silo": {
-      "commandName": "Project",
-      "commandLineArgs": "-instanceid 0"
-    }
-  }
-}
