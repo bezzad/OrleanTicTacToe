@@ -1,4 +1,6 @@
 using SiloProvider;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace MasterSilo;
 
@@ -14,15 +16,34 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
 
         var app = builder.Build();
+
+        var url = app.Configuration.GetValue<string>("Urls")!;
+
         app.UseHttpsRedirection();
+        app.MapGet("/", () => $"Master Silo is up now on {url}");
         app.Map("/dashboard", x => x.UseOrleansDashboard());
 
-        app.Run(x =>
-        {
-            x.Response.Redirect("/dashboard");
-            return Task.CompletedTask;
-        });
+        OpenBrowser(url + "/dashboard");
 
-        await app.RunAsync();
+        await app.RunAsync(url);
+    }
+
+    public static void OpenBrowser(string url)
+    {
+        Task.Run(() =>
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true, CreateNoWindow = true });
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Process.Start("xdg-open", url);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                Process.Start("open", url);
+            }
+        });
     }
 }

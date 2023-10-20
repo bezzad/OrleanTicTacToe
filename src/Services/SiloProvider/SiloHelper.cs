@@ -21,17 +21,19 @@ public static class SiloHelper
         // Use the --InstanceId X option to launch subsequent hosts.
         var args = Environment.GetCommandLineArgs();
         var instanceId = args.GetInstanceId();
+        var siloPort = 11_111 + instanceId;
+        var gatewayPort = 30_000 + instanceId;
 
         siloBuilder.AddActivityPropagation();
 
         return siloBuilder
-        // .UseLocalhostClustering()
-         .UseAdoNetClustering(options =>
-         {
-             options.Invariant = "System.Data.SqlClient";
-             options.ConnectionString = ctx.Configuration.GetConnectionString("OrleansDb");
-         })
+        //.UseLocalhostClustering()
         //.UseRedisClustering(ctx.Configuration.GetConnectionString("Redis"))
+        .UseAdoNetClustering(options =>
+        {
+            options.Invariant = "System.Data.SqlClient";
+            options.ConnectionString = ctx.Configuration.GetConnectionString("OrleansDb");
+        })
         .ConfigureLogging(logging => logging.AddConsole())
         //.UseLinuxEnvironmentStatistics()
         .Configure<ClusterOptions>(options =>
@@ -42,15 +44,15 @@ public static class SiloHelper
         .Configure<EndpointOptions>(options =>
         {
             // Port to use for silo-to-silo
-            options.SiloPort = 11_111 + instanceId;
+            options.SiloPort = siloPort;
             // Port to use for the gateway
-            options.GatewayPort = 30_000 + instanceId;
+            options.GatewayPort = gatewayPort;
             // IP Address to advertise in the cluster
             options.AdvertisedIPAddress = IPAddress.Loopback;
             // The socket used for client-to-silo will bind to this endpoint
-            //options.GatewayListeningEndpoint = new IPEndPoint(IPAddress.Any, 40_000 + instanceId);
+            options.GatewayListeningEndpoint = new IPEndPoint(IPAddress.Any, gatewayPort);
             // The socket used by the gateway will bind to this endpoint
-            //options.SiloListeningEndpoint = new IPEndPoint(IPAddress.Any, 50_000 + instanceId);
+            options.SiloListeningEndpoint = new IPEndPoint(IPAddress.Any, siloPort);
         })
         .UseDashboard(options =>
         {
