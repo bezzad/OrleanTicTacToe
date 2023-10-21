@@ -1,5 +1,5 @@
 using GrainInterfaces.Models;
-using Orleans;
+using Orleans.Concurrency;
 
 namespace GrainInterfaces;
 
@@ -9,7 +9,11 @@ public interface IPairingGrain : IGrainWithIntegerKey
 
     Task RemoveGame(Guid gameId);
 
+    [AlwaysInterleave]
+    [ReadOnly]
     Task<PairingSummary> GetGame(Guid gameId);
 
+    [AlwaysInterleave]
+    [ReadOnly]
     Task<PairingSummary[]> GetGames();
 }
