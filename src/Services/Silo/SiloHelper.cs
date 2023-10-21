@@ -14,7 +14,7 @@ public static class SiloHelper
     private const string ServiceId = "orleansTictactoeService"; // ServiceId is used for storage
     private static readonly int GatewayStartPort = 30_000;
     private static readonly int SiloStartPort = 11_111;
-    private static readonly IPAddress SiloAddress = IPAddress.Loopback;
+    private static readonly IPAddress SiloAddress = HostHelper.GetLocalIPAddress(); // IPAddress.Parse("192.168.1.104"); // IPAddress.Loopback;
 
     public static IHostBuilder UseOrleansSilo(this IHostBuilder host)
     {

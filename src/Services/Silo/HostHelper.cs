@@ -131,4 +131,17 @@ public static class HostHelper
 
         return true;
      }
+
+    public static IPAddress GetLocalIPAddress()
+    {
+        var host = Dns.GetHostEntry(Dns.GetHostName());
+        foreach (var ip in host.AddressList)
+        {
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
+            {
+                return ip;
+            }
+        }
+        throw new Exception("No network adapters with an IPv4 address in the system!");
+    }
 }
