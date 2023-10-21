@@ -86,7 +86,7 @@ public static class HostHelper
     {
         for (int i = basePort; i < basePort + count; i++)
         {
-            if (reservedPorts.Contains(i) == false && IsPortAvailable(i) && CheckAvailableServerPort(i))
+            if (reservedPorts.Contains(i) == false && CheckAvailableServerPort(i)) // && IsPortAvailable(i) 
                 return i;
         }
 

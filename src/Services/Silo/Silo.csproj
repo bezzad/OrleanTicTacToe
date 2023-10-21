@@ -36,4 +36,10 @@
     <ProjectReference Include="..\..\Actors\Grains\Grains.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="OrleansConfiguration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 namespace Grains;
 
 [Reentrant]
-//[StatelessWorker]
 public class PairingGrain : Grain, IPairingGrain
 {
     //  System.Runtime.Caching.MemoryCache _cache = new("pairing");
