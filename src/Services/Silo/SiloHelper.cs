@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orleans.Configuration;
 using System.Net;
+using System.Net.NetworkInformation;
 
 namespace Silo;
 
@@ -14,7 +15,6 @@ public static class SiloHelper
     private const string ServiceId = "orleansTictactoeService"; // ServiceId is used for storage
     private static readonly int GatewayStartPort = 30_000;
     private static readonly int SiloStartPort = 11_111;
-    private static readonly IPAddress SiloAddress = HostHelper.GetLocalIPAddress(); // IPAddress.Parse("192.168.1.104"); // IPAddress.Loopback;
 
     public static IHostBuilder UseOrleansSilo(this IHostBuilder host)
     {
@@ -31,6 +31,8 @@ public static class SiloHelper
         var instanceId = HostHelper.GetId(sqlConn, SiloStartPort);
         var siloPort = SiloStartPort + instanceId;
         var gatewayPort = GatewayStartPort + instanceId;
+        var netType = ctx.Configuration.GetValue<NetworkInterfaceType>("NetworkInterfaceType");
+        var siloAddress = HostHelper.GetAllLocalIPv4(netType).FirstOrDefault() ?? IPAddress.Loopback;
 
         siloBuilder.AddActivityPropagation()
         //.UseLocalhostClustering()
@@ -58,7 +60,7 @@ public static class SiloHelper
             // Port to use for the gateway
             options.GatewayPort = gatewayPort;
             // IP Address to advertise in the cluster
-            options.AdvertisedIPAddress = SiloAddress;
+            options.AdvertisedIPAddress = siloAddress;
             // The socket used for client-to-silo will bind to this endpoint
             options.GatewayListeningEndpoint = new IPEndPoint(IPAddress.Any, gatewayPort);
             // The socket used by the gateway will bind to this endpoint

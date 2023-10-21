@@ -93,24 +93,6 @@ public static class HostHelper
         return -1;
     }
 
-    private static bool IsPortAvailable(int port)
-    {
-        IPAddress ipAddress = Dns.GetHostEntry("localhost").AddressList[0];
-        try
-        {
-            TcpListener tcpListener = new TcpListener(ipAddress, port);
-            tcpListener.Start();
-            tcpListener.Stop();
-            return true;
-        }
-        catch (SocketException ex)
-        {
-            Console.Error.WriteLine(ex);
-        }
-
-        return false;
-    }
-
     private static bool CheckAvailableServerPort(int port)
     {
         // Evaluate current system tcp connections. This is the same information provided
@@ -132,16 +114,22 @@ public static class HostHelper
         return true;
      }
 
-    public static IPAddress GetLocalIPAddress()
+    public static IPAddress[] GetAllLocalIPv4(NetworkInterfaceType _type)
     {
-        var host = Dns.GetHostEntry(Dns.GetHostName());
-        foreach (var ip in host.AddressList)
+        var ipAddrList = new List<IPAddress>();
+        foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())
         {
-            if (ip.AddressFamily == AddressFamily.InterNetwork)
+            if (item.NetworkInterfaceType == _type && item.OperationalStatus == OperationalStatus.Up)
             {
-                return ip;
+                foreach (UnicastIPAddressInformation ip in item.GetIPProperties().UnicastAddresses)
+                {
+                    if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipAddrList.Add(ip.Address);
+                    }
+                }
             }
         }
-        throw new Exception("No network adapters with an IPv4 address in the system!");
+        return ipAddrList.ToArray();
     }
 }
