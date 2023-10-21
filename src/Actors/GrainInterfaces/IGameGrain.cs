@@ -1,10 +1,10 @@
 using GrainInterfaces.Models;
-using Orleans;
 
 namespace GrainInterfaces;
 
 public interface IGameGrain : IGrainWithGuidKey
 {
+    [ResponseTimeout("00:00:05")] // 5s timeout
     Task<GameState> AddPlayerToGame(Guid player);
     Task<GameState> GetState();
     Task<List<GameMove>> GetMoves();
