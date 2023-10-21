@@ -30,29 +30,7 @@ internal class Program
             .ConfigureLogging(logging => logging.AddConsole())
             .ConfigureWebHostDefaults(webBuilder =>
             {
-                webBuilder.ConfigureServices(services =>
-                {
-                    // Add services to the container.
-                    services.AddControllers();
-                    services.AddSignalR();
-
-                    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-                    services.AddEndpointsApiExplorer();
-                    services.AddSwaggerGen(options =>
-                    {
-                        var version = "v" + typeof(Program).Assembly.GetName().Version.ToString(3);
-                        options.SwaggerDoc("v1", new OpenApiInfo
-                        {
-                            Title = nameof(TicTacToe),
-                            Version = version
-                        });
-                        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml"));
-                        options.DescribeAllParametersInCamelCase();
-                    });
-                });
-
                 webBuilder.UseStartup<Startup>();
-
                 webBuilder.ConfigureKestrel((ctx, kestrelOptions) =>
                 {
                     // To avoid port conflicts, each Web server must listen on a different port.
@@ -65,7 +43,24 @@ internal class Program
             })
             .ConfigureServices((context, services) =>
             {
-                //services.Configure<IClusterClient>(options => context.Configuration.GetSection("Sample").Bind(options));
+                // Add services to the container.
+                services.AddControllers();
+                services.AddServicesForSelfHostedDashboard();
+                services.AddSignalR();
+
+                // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+                services.AddEndpointsApiExplorer();
+                services.AddSwaggerGen(options =>
+                {
+                    var version = "v" + typeof(Program).Assembly.GetName().Version.ToString(3);
+                    options.SwaggerDoc("v1", new OpenApiInfo
+                    {
+                        Title = nameof(TicTacToe),
+                        Version = version
+                    });
+                    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml"));
+                    options.DescribeAllParametersInCamelCase();
+                });
             });
 
         return builder;

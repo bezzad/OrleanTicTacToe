@@ -2,7 +2,6 @@
   "profiles": {
     "http": {
       "commandName": "Project",
-      "commandLineArgs": "-instanceId 0",
       "launchBrowser": true,
       "launchUrl": "",
       "environmentVariables": {
@@ -13,7 +12,6 @@
     },
     "https": {
       "commandName": "Project",
-      "commandLineArgs": "-instanceId 0",
       "launchBrowser": true,
       "launchUrl": "",
       "environmentVariables": {
