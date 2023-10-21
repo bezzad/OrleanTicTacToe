@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using GrainInterfaces.Extensions;
+using Grains.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orleans.Configuration;
@@ -31,7 +33,6 @@ public static class SiloHelper
         var gatewayPort = GatewayStartPort + instanceId;
 
         siloBuilder.AddActivityPropagation()
-            
         //.UseLocalhostClustering()
         //.UseRedisClustering(ctx.Configuration.GetConnectionString("Redis"))
         .UseAdoNetClustering(options =>
@@ -67,8 +68,9 @@ public static class SiloHelper
         .UseDashboard(options =>
         {
             options.HostSelf = false;
-        });
-
+        })
+        .AddGrainExtension<IGrainDeactivateExtension, GrainDeactivateExtension>();
+        //.UsePerfCounterEnvironmentStatistics()
         return siloBuilder;
     }
 }

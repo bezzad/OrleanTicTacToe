@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Liveness ProbeTimeout="5s"
+    TableRefreshTimeout="10s"
+    DeathVoteExpirationTimeout="180s"
+    NumMissedProbesLimit="3"
+    NumProbedSilos="3"
+    NumVotesForDeathDeclaration="2" />

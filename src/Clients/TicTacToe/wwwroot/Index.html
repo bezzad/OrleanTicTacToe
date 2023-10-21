@@ -27,6 +27,11 @@
     </style>
 </head>
 <body>
+    <div class="jumbotron">
+        <a id="orleansDashboardBtn" class="btn btn-default" href="dashboard">Orleans Dashboard</a>
+        <a id="swaggerBtn" class="btn btn-default" href="swagger/index.html">API Swagger</a>
+    </div>
+
     <div id="header-placeholder" class="container jumbotron">
     </div>
     <div class="container">
@@ -113,6 +118,7 @@
         <a id="startNewBtn" class="btn btn-primary" href="javascript:void(0);" onclick="oxo.controllers.createGame();">Start a new Game</a>
         <a id="joinBtn" class="btn btn-success" href="javascript:void(0);" onclick="oxo.controllers.showJoinDialog();">Join a Game</a>
         <a id="joinBtn" class="btn btn-primary" href="javascript:void(0);" onclick="oxo.controllers.refreshGamesList();">Refresh</a>
+        <a id="joinBtn" class="btn btn-primary" href="javascript:void(0);" onclick="oxo.controllers.changeName();">Change Name</a>
     </script>
 
     <div class="modal fade" id="enter-name-modal">

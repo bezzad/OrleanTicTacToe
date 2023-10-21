@@ -1,12 +1,12 @@
 using GrainInterfaces;
 using GrainInterfaces.Models;
-using Orleans;
 using Orleans.Concurrency;
 using System.Collections.Concurrent;
 
 namespace Grains;
 
 [Reentrant]
+//[StatelessWorker]
 public class PairingGrain : Grain, IPairingGrain
 {
     //  System.Runtime.Caching.MemoryCache _cache = new("pairing");

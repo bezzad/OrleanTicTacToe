@@ -94,6 +94,9 @@ var oxo = {
                 });
             }
         },
+        changeName: function () {
+            $("#enter-name-modal").modal('show');
+        },
         play: function (gameId) {
             oxo.model.currentGameId = gameId;
             oxo.controllers.refreshBoard();

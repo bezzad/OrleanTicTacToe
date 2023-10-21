@@ -18,6 +18,12 @@ public class PlayerGrain : Grain<User>, IPlayerGrain
         await base.OnActivateAsync(token);
     }
 
+    public override async Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
+    {
+        await Console.Out.WriteLineAsync(reason.Description);
+        await base.OnDeactivateAsync(reason, cancellationToken);
+    }
+
     public async Task<PairingSummary[]> GetAvailableGames()
     {
         var grain = GrainFactory.GetGrain<IPairingGrain>(0);
