@@ -11,11 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solutions", "Solutions", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL Server Scripts", "SQL Server Scripts", "{8926BADB-4AED-45CC-A0A5-C20B938A170C}"
 	ProjectSection(SolutionItems) = preProject
-		SqlScripts\CreateOrleansTables_SqlServer.sql = SqlScripts\CreateOrleansTables_SqlServer.sql
 		SqlScripts\SQLServer-Clustering.sql = SqlScripts\SQLServer-Clustering.sql
 		SqlScripts\SQLServer-Main.sql = SqlScripts\SQLServer-Main.sql
 		SqlScripts\SQLServer-Persistence.sql = SqlScripts\SQLServer-Persistence.sql
 		SqlScripts\SQLServer-Reminders.sql = SqlScripts\SQLServer-Reminders.sql
+		SqlScripts\SQLServer-Statistics.sql = SqlScripts\SQLServer-Statistics.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{AB63786A-92E9-4365-B3E8-CBA69101F725}"
