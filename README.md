@@ -54,7 +54,7 @@ The game server will start and you can open a browser to `http://localhost:5000/
 If you wish, you can start more instances of the host to see them form a cluster. If you do so, add the `InstanceId` option on the command line to differentiate them. A production application would use something other than the "localhost clustering" which this application uses (see _Program.cs_ for where clustering is configured via `UseLocalhostClustering`) and therefore this `InstanceId` option would not be necessary.
 
 ```bash
-dotnet run -- --InstanceId 1
+dotnet run --instanceid 1
 ```
 
 Since the game uses cookies to identify players, you will need a separate browser session to be able to play against yourself and experience the game.
